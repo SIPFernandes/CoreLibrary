@@ -1,0 +1,7 @@
+Startup Project: IntCoreDB.API
+
+Commands:
+Reset: Update-Database 0 -Context IntCoreDBContext -Project IntCoreDB.Infrastructure
+Remove: Remove-Migration -Context IntCoreDBContext -Project IntCoreDB.Infrastructure
+Add: Add-Migration InitialCreate -Context IntCoreDBContext -OutputDir Data\Migrations -Project IntCoreDB.Infrastructure
+Update: Update-Database -Context IntCoreDBContext -Project IntCoreDB.Infrastructure
