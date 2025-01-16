@@ -87,7 +87,7 @@ namespace CoreLibrary.Core.Services
         {
             try
             {
-                if (Validate(dto))
+                if (await Validate(dto))
                 {
                     var entity = _mapper.Map<TEntity>(dto);
 
@@ -108,17 +108,7 @@ namespace CoreLibrary.Core.Services
         {
             try
             {
-                var entities = new List<TEntity>();
-
-                foreach(var dto in list)
-                {
-                    if (Validate(dto))
-                    {
-                        var entity = _mapper.Map<TEntity>(dto);
-
-                        entities.Add(entity);
-                    }
-                }
+                var entities = await FromDtosToEntities(list);
 
                 return await _repository.BulkInsert(entities);
             }
@@ -134,7 +124,7 @@ namespace CoreLibrary.Core.Services
             { 
                 TDto? result = null;
 
-                if (Validate(dto))
+                if (await Validate(dto))
                 {
                     var entity = _mapper.Map<TEntity>(dto);
 
@@ -155,7 +145,7 @@ namespace CoreLibrary.Core.Services
         {
             try
             {
-                List<TEntity> entities = FromDtosToEntities(dtos);
+                List<TEntity> entities = await FromDtosToEntities(dtos);
 
                 return await _repository.UpdateMultipleChilds(entities, x => dtos.Select(y => y.Id).Contains(x.Id), deleteMissing: false);
             }
@@ -172,9 +162,9 @@ namespace CoreLibrary.Core.Services
             await _repository.Delete(entity);
         }
 
-        public virtual bool Validate(TDto dto, object? validationObj = null)
+        public virtual Task<bool> Validate(TDto dto, object? validationObj = null)
         {
-            return true;
+            return Task.FromResult(true);
         }
 
         public virtual async Task DeleteById(Guid id)
@@ -192,13 +182,13 @@ namespace CoreLibrary.Core.Services
             await _repository.DeleteMultipleLeafType(expression);
         }
 
-        protected List<TEntity> FromDtosToEntities(IEnumerable<TDto> dtos, object? validationObj = null)
+        protected async Task<List<TEntity>> FromDtosToEntities(IEnumerable<TDto> dtos, object? validationObj = null)
         {
             var entities = new List<TEntity>();
 
             foreach (var dto in dtos)
             {
-                if (Validate(dto, validationObj))
+                if (await Validate(dto, validationObj))
                 {
                     var entity = _mapper.Map<TEntity>(dto);
 

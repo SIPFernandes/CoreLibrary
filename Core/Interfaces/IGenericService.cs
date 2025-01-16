@@ -16,7 +16,7 @@ namespace CoreLibrary.Core.Interfaces
         Task<TDto?> Get(Guid id, Expression<Func<TEntity, TDto>> selector);
         Task<TDto> Insert(TDto dto);
         Task<IEnumerable<TEntity>> BulkInsert(IEnumerable<TDto> list);
-        bool Validate(TDto dto, object? validationObj = null);
+        Task<bool> Validate(TDto dto, object? validationObj = null);
         Task<TDto?> Update(Guid id, TDto dto);
         Task<IEnumerable<TEntity>?> BulkAddOrUpdate(IEnumerable<TDto> dtos);
         Task Delete(TDto dto);
