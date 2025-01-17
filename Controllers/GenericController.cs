@@ -1,5 +1,6 @@
 ﻿using CoreLibrary.Core.Entities;
 using CoreLibrary.Core.Interfaces;
+using CoreLibrary.Filters;
 using CoreLibrary.Filters.ControllerFilterModels;
 using CoreLibrary.Filters.ServiceFilterModels;
 using CoreLibrary.Shared.Models;
@@ -224,6 +225,30 @@ namespace CoreLibrary.Controllers
             try
             {
                 await _genericService.BulkDeleteById(ids);
+            }
+            catch (Exception ex)
+            {
+                var innerException = ex.InnerException?.Message;
+
+                return StatusCode(500, new { ex.Message, innerException });
+            }
+
+            return Ok();
+        }
+
+        [HttpDelete(nameof(DeleteWhere))]
+        public virtual async Task<IActionResult> DeleteWhere([FromBody] CombinedFilter combinedFilter)
+        {
+            if (combinedFilter == null)
+            {
+                return BadRequest("Invalid Filter");
+            }
+
+            try
+            {
+                var expression = FilterHelper<TEntity>.CombineExpressions(combinedFilter);
+
+                await _genericService.DeleteWhere(expression);
             }
             catch (Exception ex)
             {
