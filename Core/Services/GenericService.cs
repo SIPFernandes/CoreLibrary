@@ -27,9 +27,9 @@ namespace CoreLibrary.Core.Services
             return _mapper.Map<IEnumerable<TDto>>(entities); 
         }
 
-        public virtual async Task<IEnumerable<TDto>> GetItemsFiltered(GetItemsServiceFilter<TDto, TEntity> model)
+        public virtual async Task<IEnumerable<object>> GetItemsFiltered(GetItemsServiceFilter<TEntity> model)
         {
-            IEnumerable<TDto> result = [];
+            IEnumerable<object> result = [];
 
             if (model != null) {
                 if (model.OrderedBy != null)

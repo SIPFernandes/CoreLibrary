@@ -11,7 +11,7 @@ namespace CoreLibrary.Core.Interfaces
         where TEntity : BaseEntity, IAggregateRoot
     {
         Task<IEnumerable<TDto>> GetAll();
-        Task<IEnumerable<TDto>> GetItemsFiltered(GetItemsServiceFilter<TDto, TEntity> model);
+        Task<IEnumerable<object>> GetItemsFiltered(GetItemsServiceFilter<TEntity> model);
         Task<TDto?> Get(Guid id);
         Task<TDto?> Get(Guid id, Expression<Func<TEntity, TDto>> selector);
         Task<TDto> Insert(TDto dto);

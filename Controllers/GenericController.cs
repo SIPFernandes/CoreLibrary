@@ -43,7 +43,7 @@ namespace CoreLibrary.Controllers
         {
             try
             {
-                var serviceFilter = new GetItemsServiceFilter<TDto, TEntity>(model);
+                var serviceFilter = new GetItemsServiceFilter<TEntity>(model);
 
                 var dtos = await _genericService.GetItemsFiltered(serviceFilter);
 

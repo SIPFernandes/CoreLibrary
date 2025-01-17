@@ -61,24 +61,26 @@ namespace CoreLibrary.Filters
             return Expression.Lambda<Func<T, object>>(expression, parameter);
         }
 
-        public static Expression<Func<T, W>> GetSelectExpression<W>(IEnumerable<string> properties)
+        public static Expression<Func<T, IDictionary<string, object>>> GetSelectExpression(IEnumerable<string> properties)
         {
             var parameter = Expression.Parameter(typeof(T), "e");
-            var bindings = new List<MemberBinding>();
 
-            foreach (var propertyName in properties)
+            var bindings = properties.Select(propertyName =>
             {
                 var property = Expression.Property(parameter, propertyName);
+                var converted = Expression.Convert(property, typeof(object));
+                return new KeyValuePair<string, Expression>(propertyName, converted);
+            }).ToList();
 
-                var propertyInfo = typeof(T).GetProperty(propertyName) ??
-                    throw new ArgumentException($"Property name {propertyName} does not exist in object {typeof(T).FullName}");
+            var keyValuePairs = bindings.Select(b => Expression.ElementInit(
+                typeof(Dictionary<string, object>).GetMethod("Add", [typeof(string), typeof(object)])!,
+                Expression.Constant(b.Key),
+                b.Value
+            )).ToArray();
 
-                var binding = Expression.Bind(propertyInfo, property); bindings.Add(binding);
-            }
+            var newExpression = Expression.ListInit(Expression.New(typeof(Dictionary<string, object>)), keyValuePairs);
 
-            var body = Expression.MemberInit(Expression.New(typeof(T)), bindings);
-            var lambda = Expression.Lambda<Func<T, W>>(body, parameter);
-
+            var lambda = Expression.Lambda<Func<T, IDictionary<string, object>>>(newExpression, parameter);
             return lambda;
         }
     }

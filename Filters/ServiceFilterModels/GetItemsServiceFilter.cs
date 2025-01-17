@@ -3,13 +3,13 @@ using System.Linq.Expressions;
 
 namespace CoreLibrary.Filters.ServiceFilterModels
 {
-    public class GetItemsServiceFilter<TDto, TEntity>
+    public class GetItemsServiceFilter<TEntity>
     {
         public GetItemsServiceFilter(GetItemsControllerFilter model)
         {
             if (model.Selector != null)
             {
-                Selector = FilterHelper<TEntity>.GetSelectExpression<TDto>(model.Selector.Properties);
+                Selector = FilterHelper<TEntity>.GetSelectExpression(model.Selector.Properties);
             }
 
             if (model.Filter != null)
@@ -36,7 +36,7 @@ namespace CoreLibrary.Filters.ServiceFilterModels
             Includes = model.Includes;
         }
 
-        public Expression<Func<TEntity, TDto>>? Selector = null;
+        public Expression<Func<TEntity, IDictionary<string, object>>>? Selector = null;
         public Expression<Func<TEntity, bool>>? Filter = null;
         public OrderByServiceModel<TEntity>? OrderedBy = null;
         public int Skip = 0, Take = 10;
