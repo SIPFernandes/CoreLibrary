@@ -10,22 +10,15 @@ using System.Linq.Expressions;
 
 namespace CoreLibrary.Core.Services
 {
-    public class GenericService<TRepository, TDto, TEntity> : IGenericService<TRepository, TDto, TEntity> 
+    public class GenericService<TRepository, TDto, TEntity>(TRepository repository, IMapper mapper,
+        ILogger<GenericService<TRepository, TDto, TEntity>> logger) : IGenericService<TRepository, TDto, TEntity> 
         where TRepository : IRepository<TEntity> 
         where TDto : BaseDto
         where TEntity : BaseEntity, IAggregateRoot
     {
-        protected readonly TRepository _repository;
-        protected readonly IMapper _mapper;
-        protected readonly ILogger<GenericService<TRepository, TDto, TEntity>> _logger;
-
-        public GenericService(TRepository repository, IMapper mapper,
-            ILogger<GenericService<TRepository, TDto, TEntity>> logger)
-        {
-            _repository = repository;
-            _mapper = mapper;
-            _logger = logger;
-        }
+        protected readonly TRepository _repository = repository;
+        protected readonly IMapper _mapper = mapper;
+        protected readonly ILogger<GenericService<TRepository, TDto, TEntity>> _logger = logger;
 
         public virtual async Task<IEnumerable<TDto>> GetAll()
         {

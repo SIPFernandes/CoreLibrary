@@ -22,19 +22,41 @@ namespace CoreLibrary.Controllers
         [HttpGet]
         public virtual async Task<IActionResult> GetAll()
         {
-            var dtos = await _genericService.GetAll();
+            try
+            {
+                var dtos = await _genericService.GetAll();
 
-            return Ok(dtos);
+                return Ok(dtos);
+            }
+            catch (Exception ex) 
+            {
+                var innerException = ex.InnerException?.Message;
+
+                _logger.LogError(innerException ?? ex.Message);
+
+                return StatusCode(500, new { ex.Message, innerException });
+            }
         }
 
         [HttpPost]
         public virtual async Task<IActionResult> GetItemsFiltered([FromBody] GetItemsControllerFilter model)
         {
-            var serviceFilter = new GetItemsServiceFilter<TDto, TEntity>(model);
+            try
+            {
+                var serviceFilter = new GetItemsServiceFilter<TDto, TEntity>(model);
 
-            var dtos = await _genericService.GetItemsFiltered(serviceFilter);
+                var dtos = await _genericService.GetItemsFiltered(serviceFilter);
 
-            return Ok(dtos);
+                return Ok(dtos);
+            }
+            catch (Exception ex)
+            {
+                var innerException = ex.InnerException?.Message;
+
+                _logger.LogError(innerException ?? ex.Message);
+
+                return StatusCode(500, new { ex.Message, innerException });
+            }
         }
 
         //GET ENTITY BY ID
@@ -47,10 +69,20 @@ namespace CoreLibrary.Controllers
         [HttpGet("{id}")]
         public virtual async Task<ActionResult> Get(Guid id)
         {
+            try
+            {
+                var dto = await _genericService.Get(id);
 
-            var dto = await _genericService.Get(id);
+                return Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                var innerException = ex.InnerException?.Message;
 
-            return Ok(dto);
+                _logger.LogError(innerException ?? ex.Message);
+
+                return StatusCode(500, new { ex.Message, innerException });
+            }
         }
 
         //CREATE ENTITY
@@ -74,11 +106,15 @@ namespace CoreLibrary.Controllers
             {
                 var result = await _genericService.Insert(dto);
 
+                _logger.LogInformation($"{typeof(TEntity).FullName} with id {result.Id} created");
+
                 return Created("Entity created successfully", result);
             }
             catch (Exception ex)
             {
                 var innerException = ex.InnerException?.Message;
+
+                _logger.LogError(innerException ?? ex.Message);
 
                 return StatusCode(500, new { ex.Message, innerException });
             }
@@ -99,11 +135,15 @@ namespace CoreLibrary.Controllers
             {
                 var result = await _genericService.BulkInsert(dtos);
 
+                _logger.LogInformation($"List of {typeof(TEntity).FullName} objects added in bulk");
+
                 return Created("Entities created successfully", result);
             }
             catch (Exception ex)
             {
                 var innerException = ex.InnerException?.Message;
+
+                _logger.LogError(innerException ?? ex.Message);
 
                 return StatusCode(500, new { ex.Message, innerException });
             }
@@ -141,12 +181,16 @@ namespace CoreLibrary.Controllers
                 }
                 else
                 {
+                    _logger.LogInformation($"{typeof(TEntity).FullName} with id {id} updated");
+
                     return Ok(result);
                 }
             }
             catch (Exception ex)
             {
                 var innerException = ex.InnerException?.Message;
+
+                _logger.LogError(innerException ?? ex.Message);
 
                 return StatusCode(500, new { ex.Message, innerException });
             }
@@ -173,12 +217,16 @@ namespace CoreLibrary.Controllers
                 }
                 else
                 {
+                    _logger.LogInformation($"List of {typeof(TEntity).FullName} objects added/updated in bulk");
+
                     return Ok(result);
                 }
             }
             catch (Exception ex)
             {
                 var innerException = ex.InnerException?.Message;
+
+                _logger.LogError(innerException ?? ex.Message);
 
                 return StatusCode(500, new { ex.Message, innerException });
             }
@@ -202,15 +250,19 @@ namespace CoreLibrary.Controllers
             try
             {
                 await _genericService.DeleteById(id);
+
+                _logger.LogInformation($"{typeof(TEntity).FullName} deleted according to given id: {id}");
+
+                return Ok();
             }
             catch (Exception ex)
             {
                 var innerException = ex.InnerException?.Message;
 
+                _logger.LogError(innerException ?? ex.Message);
+
                 return StatusCode(500, new { ex.Message, innerException });
             }
-
-            return Ok();
         }
 
         [HttpDelete]
@@ -224,15 +276,19 @@ namespace CoreLibrary.Controllers
             try
             {
                 await _genericService.BulkDeleteById(ids);
+
+                _logger.LogInformation($"{typeof(TEntity).FullName} deleted according to the list of ids: {string.Join(", ", ids)}");
+
+                return Ok();
             }
             catch (Exception ex)
             {
                 var innerException = ex.InnerException?.Message;
 
+                _logger.LogError(innerException ?? ex.Message);
+
                 return StatusCode(500, new { ex.Message, innerException });
             }
-
-            return Ok();
         }
 
         [HttpDelete]
@@ -248,15 +304,19 @@ namespace CoreLibrary.Controllers
                 var expression = FilterHelper<TEntity>.CombineExpressions(combinedFilter);
 
                 await _genericService.DeleteWhere(expression);
+
+                _logger.LogInformation($"{typeof(TEntity).FullName} deleted according to the expression: {expression}");
+
+                return Ok();
             }
             catch (Exception ex)
             {
                 var innerException = ex.InnerException?.Message;
 
+                _logger.LogError(innerException ?? ex.Message);
+
                 return StatusCode(500, new { ex.Message, innerException });
             }
-
-            return Ok();
         }
     }
 }

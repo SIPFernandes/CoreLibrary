@@ -645,9 +645,9 @@ namespace CoreLibrary.Infrastructure.Data
                 {
                     return await query.ToListAsync(token.Token);
                 }
-                catch (SqlException e) when (token.IsCancellationRequested)
+                catch (SqlException ex) when (token.IsCancellationRequested)
                 {
-                    _logger.LogInformation(e.Message);
+                    _logger.LogError(ex.InnerException?.Message ?? ex.Message);
 
                     throw;
                 }
@@ -667,9 +667,9 @@ namespace CoreLibrary.Infrastructure.Data
                 {
                     await context.SaveChangesAsync(token.Token);
                 }
-                catch (SqlException e) when (token.IsCancellationRequested)
+                catch (SqlException ex) when (token.IsCancellationRequested)
                 {
-                    _logger.LogInformation(e.Message);
+                    _logger.LogError(ex.InnerException?.Message ?? ex.Message);
 
                     throw;
                 }
