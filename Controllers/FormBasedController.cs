@@ -7,7 +7,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CoreLibrary.Controllers
 {
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     [ApiController]
     public abstract class FormBasedController<TForm, TDto, TEntity>(
         IGenericService<IRepository<TEntity>, TDto, TEntity> genericService,

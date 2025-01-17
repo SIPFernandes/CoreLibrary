@@ -10,7 +10,7 @@ using Microsoft.Extensions.Logging;
 namespace CoreLibrary.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("[controller]/[action]")]
     public abstract class GenericController<TDto, TEntity>(IGenericService<IRepository<TEntity>, TDto, TEntity> genericService,
         ILogger<GenericController<TDto, TEntity>> logger) : ControllerBase
         where TEntity : BaseEntity, IAggregateRoot
@@ -28,7 +28,6 @@ namespace CoreLibrary.Controllers
         }
 
         [HttpPost]
-        [Route(nameof(GetItemsFiltered))]
         public virtual async Task<IActionResult> GetItemsFiltered([FromBody] GetItemsControllerFilter model)
         {
             var serviceFilter = new GetItemsServiceFilter<TDto, TEntity>(model);
@@ -85,7 +84,7 @@ namespace CoreLibrary.Controllers
             }
         }
 
-        [HttpPost(nameof(BulkInsert))]
+        [HttpPost]
         public virtual async Task<IActionResult> BulkInsert([FromBody] IEnumerable<TDto> dtos)
         {
             if (dtos == null || !ModelState.IsValid)
@@ -153,7 +152,7 @@ namespace CoreLibrary.Controllers
             }
         }
 
-        [HttpPut(nameof(BulkAddOrUpdate))]
+        [HttpPut]
         public virtual async Task<ActionResult> BulkAddOrUpdate([FromBody] IEnumerable<TDto> dtos)
         {
             if (dtos == null || !ModelState.IsValid)
@@ -214,7 +213,7 @@ namespace CoreLibrary.Controllers
             return Ok();
         }
 
-        [HttpDelete(nameof(BulkDeleteByIds))]
+        [HttpDelete]
         public virtual async Task<IActionResult> BulkDeleteByIds([FromBody] List<Guid> ids)
         {
             if (ids == null|| ids.Count <= 0)
@@ -236,7 +235,7 @@ namespace CoreLibrary.Controllers
             return Ok();
         }
 
-        [HttpDelete(nameof(DeleteWhere))]
+        [HttpDelete]
         public virtual async Task<IActionResult> DeleteWhere([FromBody] CombinedFilter combinedFilter)
         {
             if (combinedFilter == null)
