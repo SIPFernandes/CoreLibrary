@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CoreLibrary.Core.Entities;
 using CoreLibrary.Core.Interfaces;
+using CoreLibrary.Filters.ServiceFilterModels;
 using CoreLibrary.Shared.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
@@ -33,22 +34,22 @@ namespace CoreLibrary.Core.Services
             return _mapper.Map<IEnumerable<TDto>>(entities); 
         }
 
-        public virtual async Task<IEnumerable<TDto>> GetItemsFiltered(GetItemsFilter<TDto, TEntity> model)
+        public virtual async Task<IEnumerable<TDto>> GetItemsFiltered(GetItemsServiceFilter<TDto, TEntity> model)
         {
             IEnumerable<TDto> result = [];
 
             if (model != null) {
-                if (model.Ordered != null)
+                if (model.OrderedBy != null)
                 {
                     if (model.Selector != null)
                     {
-                        result = await _repository.GetNItemsWhereOrdered(model.Selector, model.Ordered.OrderedBy,
-                            model.Ordered.Descending, model.Filter, model.Skip, model.Take, model.Includes, model.Token);
+                        result = await _repository.GetNItemsWhereOrdered(model.Selector, model.OrderedBy.OrderBy,
+                            model.OrderedBy.Descending, model.Filter, model.Skip, model.Take, model.Includes, model.Token);
                     }
                     else
                     {
-                        var entities = await _repository.GetNItemsWhereOrdered(model.Ordered.OrderedBy,
-                            model.Ordered.Descending, model.Filter, model.Skip, model.Take, model.Includes, model.Token);
+                        var entities = await _repository.GetNItemsWhereOrdered(model.OrderedBy.OrderBy,
+                            model.OrderedBy.Descending, model.Filter, model.Skip, model.Take, model.Includes, model.Token);
 
                         result = _mapper.Map<IEnumerable<TDto>>(entities);
                     }   
@@ -197,22 +198,6 @@ namespace CoreLibrary.Core.Services
             }
 
             return entities;
-        }
-    }
-
-    public class GetItemsFilter<TDto, TEntity>
-    {
-        public Expression<Func<TEntity, TDto>>? Selector = null;
-        public Expression<Func<TEntity, bool>>? Filter = null;
-        public OrderedFilter? Ordered = null;
-        public int Skip = 0, Take = 10;
-        public string[]? Includes = null;
-        public CancellationTokenSource? Token = null;
-
-        public class OrderedFilter
-        {
-            public required Expression<Func<TEntity, TDto>> OrderedBy;
-            public bool Descending = false;
         }
     }
 }

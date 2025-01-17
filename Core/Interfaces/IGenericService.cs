@@ -1,5 +1,5 @@
 ﻿using CoreLibrary.Core.Entities;
-using CoreLibrary.Core.Services;
+using CoreLibrary.Filters.ServiceFilterModels;
 using CoreLibrary.Shared.Models;
 using System.Linq.Expressions;
 
@@ -11,7 +11,7 @@ namespace CoreLibrary.Core.Interfaces
         where TEntity : BaseEntity, IAggregateRoot
     {
         Task<IEnumerable<TDto>> GetAll();
-        Task<IEnumerable<TDto>> GetItemsFiltered(GetItemsFilter<TDto, TEntity> model);
+        Task<IEnumerable<TDto>> GetItemsFiltered(GetItemsServiceFilter<TDto, TEntity> model);
         Task<TDto?> Get(Guid id);
         Task<TDto?> Get(Guid id, Expression<Func<TEntity, TDto>> selector);
         Task<TDto> Insert(TDto dto);

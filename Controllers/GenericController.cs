@@ -1,14 +1,13 @@
 ﻿using CoreLibrary.Core.Entities;
 using CoreLibrary.Core.Interfaces;
-using CoreLibrary.Core.Services;
+using CoreLibrary.Filters.ControllerFilterModels;
+using CoreLibrary.Filters.ServiceFilterModels;
 using CoreLibrary.Shared.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 namespace CoreLibrary.Controllers
 {
-    //[Authorize]
     [ApiController]
     [Route("[controller]")]
     public abstract class GenericController<TDto, TEntity>(IGenericService<IRepository<TEntity>, TDto, TEntity> genericService,
@@ -29,9 +28,11 @@ namespace CoreLibrary.Controllers
 
         [HttpGet]
         [Route(nameof(GetItemsFiltered))]
-        public virtual async Task<IActionResult> GetItemsFiltered([FromQuery] GetItemsFilter<TDto, TEntity> model)
+        public virtual async Task<IActionResult> GetItemsFiltered([FromQuery] GetItemsControllerFilter model)
         {
-            var dtos = await _genericService.GetItemsFiltered(model);
+            var serviceFilter = new GetItemsServiceFilter<TDto, TEntity>(model);
+
+            var dtos = await _genericService.GetItemsFiltered(serviceFilter);
 
             return Ok(dtos);
         }
