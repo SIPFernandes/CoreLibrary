@@ -5,9 +5,13 @@ namespace CoreLibrary.Filters
 {
     public static class FilterHelper<T>
     {
-        public static Expression<Func<T, bool>> BuildExpression(FilterModel filter)
+        public static Expression<Func<T, bool>> BuildExpression(FilterModel filter, ParameterExpression? parameter = null)
         {
-            var parameter = Expression.Parameter(typeof(T), "e");
+            if (parameter is null)
+            {
+                parameter = Expression.Parameter(typeof(T), "e");
+            }
+
             var property = Expression.Property(parameter, filter.PropertyName);
             var value = Expression.Constant(Convert.ChangeType(filter.Value, property.Type));
 
@@ -29,12 +33,13 @@ namespace CoreLibrary.Filters
 
         public static Expression<Func<T, bool>> CombineExpressions(CombinedFilter filters)
         {
-            Expression combinedExpression = BuildExpression(filters.Filters[0]).Body;
             var parameter = Expression.Parameter(typeof(T), "e");
+
+            Expression combinedExpression = BuildExpression(filters.Filters[0], parameter).Body;
 
             foreach (var filter in filters.Filters.Skip(1))
             {
-                var filterExpression = BuildExpression(filter).Body;
+                var filterExpression = BuildExpression(filter, parameter).Body;
 
                 combinedExpression = filters.CombineOperator switch
                 {
