@@ -24,9 +24,9 @@ namespace CoreLibrary.Filters.ServiceFilterModels
 
             if (model.OrderdBy != null)
             {
-                OrderedBy = new OrderByServiceModel<TEntity, TDto>()
+                OrderedBy = new OrderByServiceModel<TEntity>()
                 {
-                    OrderBy = FilterHelper<TEntity>.OrderByProperty<TDto>(model.OrderdBy.PropertyName),
+                    OrderBy = FilterHelper<TEntity>.OrderByProperty(model.OrderdBy.PropertyName),
                     Descending = model.OrderdBy.Descending
                 };
             }
@@ -38,7 +38,7 @@ namespace CoreLibrary.Filters.ServiceFilterModels
 
         public Expression<Func<TEntity, TDto>>? Selector = null;
         public Expression<Func<TEntity, bool>>? Filter = null;
-        public OrderByServiceModel<TEntity, TDto>? OrderedBy = null;
+        public OrderByServiceModel<TEntity>? OrderedBy = null;
         public int Skip = 0, Take = 10;
         public string[]? Includes = null;
         public CancellationTokenSource? Token = null;

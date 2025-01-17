@@ -52,13 +52,13 @@ namespace CoreLibrary.Filters
             return Expression.Lambda<Func<T, bool>>(combinedExpression, parameter);
         }
 
-        public static Expression<Func<T, W>> OrderByProperty<W>(string propertyName)
+        public static Expression<Func<T, object>> OrderByProperty(string propertyName)
         {
             var parameter = Expression.Parameter(typeof(T), "e");
             var property = Expression.Property(parameter, propertyName);
-            var expression = Expression.Convert(property, typeof(W));
+            var expression = Expression.Convert(property, typeof(object));
 
-            return Expression.Lambda<Func<T, W>>(expression, parameter);
+            return Expression.Lambda<Func<T, object>>(expression, parameter);
         }
 
         public static Expression<Func<T, W>> GetSelectExpression<W>(IEnumerable<string> properties)
