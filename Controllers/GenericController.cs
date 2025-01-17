@@ -27,9 +27,9 @@ namespace CoreLibrary.Controllers
             return Ok(dtos);
         }
 
-        [HttpGet]
+        [HttpPost]
         [Route(nameof(GetItemsFiltered))]
-        public virtual async Task<IActionResult> GetItemsFiltered([FromQuery] GetItemsControllerFilter model)
+        public virtual async Task<IActionResult> GetItemsFiltered([FromBody] GetItemsControllerFilter model)
         {
             var serviceFilter = new GetItemsServiceFilter<TDto, TEntity>(model);
 
