@@ -7,7 +7,6 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
-using SharpCompress.Common;
 using System.Linq.Expressions;
 
 namespace CoreLibrary.Infrastructure.Data

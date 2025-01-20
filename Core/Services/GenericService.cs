@@ -66,13 +66,13 @@ namespace CoreLibrary.Core.Services
             return result;
         }
 
-        public virtual async Task<TDto?> Get(Guid id)
+        public virtual async Task<TDto> Get(Guid id)
         {
             var entity = await _repository.Get(id);
             return _mapper.Map<TDto>(entity);
         }
 
-        public virtual async Task<TDto?> Get(Guid id, Expression<Func<TEntity, TDto>> selector)
+        public virtual async Task<TDto> Get(Guid id, Expression<Func<TEntity, TDto>> selector)
         {
             return await _repository.Get(id, selector);
         }
