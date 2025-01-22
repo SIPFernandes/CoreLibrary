@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoreLibrary.Tests.IntegrationTests.Fixtures
 {
-    public abstract class RepositoryFixture<T>
+    public abstract class RepositoryFixture<T> : IAsyncDisposable
         where T : DbContext
     {
         public readonly MockDbContextFactory<T> _dbContextFact;
@@ -16,10 +16,11 @@ namespace CoreLibrary.Tests.IntegrationTests.Fixtures
             _context = _dbContextFact.CreateDbContext();
         }
 
-        public void Dispose()
+
+        public async ValueTask DisposeAsync()
         {
-            _context.SaveChanges();
-            _context.Dispose();
+            await _context.DisposeAsync();
+            GC.SuppressFinalize(this);
         }
     }
 }
