@@ -17,7 +17,7 @@ namespace CoreLibrary.Tests.IntegrationTests.Fixtures
         }
 
 
-        public async ValueTask DisposeAsync()
+        public virtual async ValueTask DisposeAsync()
         {
             await _context.DisposeAsync();
             GC.SuppressFinalize(this);
