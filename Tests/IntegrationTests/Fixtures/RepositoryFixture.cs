@@ -9,9 +9,9 @@ namespace CoreLibrary.Tests.IntegrationTests.Fixtures
         public readonly MockDbContextFactory<T> _dbContextFact;
         public readonly T _context;
 
-        public RepositoryFixture()
+        public RepositoryFixture(string databaseName = "InMemoryTestDb")
         {
-            _dbContextFact = new MockDbContextFactory<T>("InMemoryTestDbRepository");
+            _dbContextFact = new MockDbContextFactory<T>(databaseName);
 
             _context = _dbContextFact.CreateDbContext();
         }
