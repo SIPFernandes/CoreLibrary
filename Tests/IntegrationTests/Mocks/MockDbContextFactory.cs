@@ -9,7 +9,6 @@ namespace CoreLibrary.Tests.IntegrationTests.Mocks
         private readonly DbContextOptions<T> _options = new DbContextOptionsBuilder<T>()
             .UseInMemoryDatabase(databaseName)
             .UseQueryTrackingBehavior(queryBehavior)
-            
             .Options;
 
         public T CreateDbContext()
