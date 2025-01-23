@@ -10,15 +10,15 @@ namespace CoreLibrary.Tests.IntegrationTests.Mocks
 
         public MockDbContextFactory(string databaseName = "InMemoryTestDb",
             QueryTrackingBehavior queryBehavior = QueryTrackingBehavior.NoTracking,
-            bool logToConsole = false)
+            bool sensitiveDataLogging = false)
         {
             var optionsBuilder = new DbContextOptionsBuilder<T>()
                 .UseInMemoryDatabase(databaseName)
                 .UseQueryTrackingBehavior(queryBehavior);
 
-            if (logToConsole)
+            if (sensitiveDataLogging)
             {
-                optionsBuilder.LogTo(Console.WriteLine, LogLevel.Information);
+                optionsBuilder.EnableSensitiveDataLogging();
             }
 
             _options = optionsBuilder.Options;
