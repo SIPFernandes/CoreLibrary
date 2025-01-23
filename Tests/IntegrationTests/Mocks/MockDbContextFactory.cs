@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace CoreLibrary.Tests.IntegrationTests.Mocks
 {
@@ -8,12 +7,11 @@ namespace CoreLibrary.Tests.IntegrationTests.Mocks
     {
         private readonly DbContextOptions<T> _options;
 
-        public MockDbContextFactory(string databaseName = "InMemoryTestDb",
-            QueryTrackingBehavior queryBehavior = QueryTrackingBehavior.NoTracking,
+        public MockDbContextFactory(QueryTrackingBehavior queryBehavior = QueryTrackingBehavior.NoTracking,
             bool sensitiveDataLogging = false)
         {
             var optionsBuilder = new DbContextOptionsBuilder<T>()
-                .UseInMemoryDatabase(databaseName)
+                .UseSqlite("DataSource=:memory:")
                 .UseQueryTrackingBehavior(queryBehavior);
 
             if (sensitiveDataLogging)
