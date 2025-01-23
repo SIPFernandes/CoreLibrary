@@ -10,9 +10,10 @@ namespace CoreLibrary.Tests.IntegrationTests.Fixtures
         public readonly T _context;
 
         public RepositoryFixture(string databaseName = "InMemoryTestDb",
-            QueryTrackingBehavior queryBehavior = QueryTrackingBehavior.NoTracking)
+            QueryTrackingBehavior queryBehavior = QueryTrackingBehavior.NoTracking,
+            bool logToConsole = false)
         {
-            _dbContextFact = new MockDbContextFactory<T>(databaseName, queryBehavior);
+            _dbContextFact = new MockDbContextFactory<T>(databaseName, queryBehavior, logToConsole);
 
             _context = _dbContextFact.CreateDbContext();
         }
