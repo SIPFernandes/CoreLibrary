@@ -7,11 +7,12 @@ namespace CoreLibrary.Tests.IntegrationTests.Mocks
     {
         private readonly DbContextOptions<T> _options;
 
-        public MockDbContextFactory(QueryTrackingBehavior queryBehavior = QueryTrackingBehavior.NoTracking,
+        public MockDbContextFactory(string databaseName = "InMemoryTestDb", 
+            QueryTrackingBehavior queryBehavior = QueryTrackingBehavior.NoTracking,
             bool sensitiveDataLogging = false)
         {
             var optionsBuilder = new DbContextOptionsBuilder<T>()
-                .UseSqlite("DataSource=:memory:")
+                .UseInMemoryDatabase(databaseName)
                 .UseQueryTrackingBehavior(queryBehavior);
 
             if (sensitiveDataLogging)
