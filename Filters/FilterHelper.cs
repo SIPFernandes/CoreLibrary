@@ -13,7 +13,19 @@ namespace CoreLibrary.Filters
             }
 
             var property = Expression.Property(parameter, filter.PropertyName);
-            var value = Expression.Constant(Convert.ChangeType(filter.Value, property.Type));
+
+            var propertyType = property.Type;
+
+            Expression value;
+
+            if (propertyType == typeof(Guid))
+            {
+                value = Expression.Constant(Guid.Parse(filter.Value));
+            }
+            else
+            {
+                value = Expression.Constant(Convert.ChangeType(filter.Value, propertyType));
+            }
 
             BinaryExpression comparison = filter.Operator switch
             {
