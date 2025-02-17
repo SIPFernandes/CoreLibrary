@@ -18,7 +18,11 @@ namespace CoreLibrary.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var result = await service.Get(Guid.Empty);
+            var dtos = await service.GetAll();
+
+            var dto = dtos.FirstOrDefault();
+
+            var result = mapper.Map<TForm>(dto);
 
             return Ok(result);
         }
@@ -28,9 +32,24 @@ namespace CoreLibrary.Controllers
         {
             try
             {
+                var dtos = await service.GetAll();
+
+                var first = dtos.FirstOrDefault();
+
                 var dto = mapper.Map<TDto>(form);
 
-                var result = await service.Update(Guid.Empty, dto);
+                if (first != null)
+                {
+                    dto.Id = first.Id;
+
+                    dto = await service.Update(first.Id, dto);
+                }
+                else
+                {
+                    dto = await service.Insert(dto);
+                }                
+
+                var result = mapper.Map<TForm>(dto);
 
                 return Ok(result);
             }
