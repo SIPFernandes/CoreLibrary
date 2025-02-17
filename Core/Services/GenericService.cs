@@ -5,6 +5,7 @@ using CoreLibrary.Filters.ServiceFilterModels;
 using CoreLibrary.Shared.Models;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
 
@@ -147,6 +148,29 @@ namespace CoreLibrary.Core.Services
             {
                 throw sqlEx;
             }
+        }
+
+        public async Task UpdatePropertyInMultipleItems(Expression<Func<TEntity, bool>> expression,
+            Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyExpression)
+        {
+            await _repository.UpdateMultipleLeafType(expression, setPropertyExpression);
+        }
+
+        public async Task UpdatePropertiesInMultipleItems(Expression<Func<TEntity, bool>> expression,
+            List<Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>>> setPropertyExpressionList)
+        {
+            Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyExpressionResult = set => set;
+
+            foreach (var setPropertyExpression in setPropertyExpressionList)
+            {
+                var call = (MethodCallExpression)setPropertyExpression.Body;
+                setPropertyExpressionResult = Expression.Lambda<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>>(
+                    Expression.Call(setPropertyExpressionResult.Body, call.Method, call.Arguments),
+                    setPropertyExpression.Parameters
+                );
+            }
+
+            await _repository.UpdateMultipleLeafType(expression, setPropertyExpressionResult);
         }
 
         public virtual async Task Delete(TDto dto)
