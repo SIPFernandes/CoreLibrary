@@ -93,7 +93,7 @@ namespace CoreLibrary.Controllers
         /// <response code="200">Success.</response>
         /// <response code="400">Unable to get the entity due to validation error.</response>
         /// <response code="404">Entity not found!</response>
-        [HttpGet("{id}")]
+        [HttpPost("{id}")]
         public virtual async Task<ActionResult> GetSelectFilter(Guid id, [FromBody] GetSelectControllerFilter model)
         {
             try

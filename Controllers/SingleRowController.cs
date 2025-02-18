@@ -28,7 +28,7 @@ namespace CoreLibrary.Controllers
             return Ok(result);
         }
 
-        [HttpGet]
+        [HttpPost]
         public async Task<ActionResult> GetSelectFilter([FromBody] GetSelectControllerFilter model)
         {
             try
