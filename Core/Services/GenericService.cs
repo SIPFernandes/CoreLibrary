@@ -67,11 +67,22 @@ namespace CoreLibrary.Core.Services
             return result;
         }
 
-        public virtual async Task<TDto> GetFirst()
+        public virtual async Task<TDto?> GetFirstOrDefault()
         {
-            var entity = await _repository.GetFirst();
+            var entity = await _repository.GetFirstOrDefault();
 
-            return _mapper.Map<TDto>(entity);
+            TDto? result;
+
+            if (entity == null)
+            {
+                result = null;
+            }
+            else
+            {
+                result = _mapper.Map<TDto>(entity);
+            }
+
+            return result;
         }
 
         public virtual async Task<object> GetFirstSelectFilter(GetSelectServiceFilter<TEntity> model)

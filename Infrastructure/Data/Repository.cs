@@ -228,13 +228,13 @@ namespace CoreLibrary.Infrastructure.Data
             }
         }
 
-        public async Task<T> GetFirst()
+        public async Task<T?> GetFirstOrDefault()
         {
             using var context = await _dbContextFact.CreateDbContextAsync();
 
             var entities = context.Set<T>();
 
-            return entities.First();
+            return await entities.FirstOrDefaultAsync();
         }
 
         public async Task<T> GetFirst(IEnumerable<string>? includes)
@@ -252,7 +252,7 @@ namespace CoreLibrary.Infrastructure.Data
                 }
             }
 
-            return entities.First();
+            return await entities.FirstAsync();
         }
 
         public async Task<W> GetFirst<W>(Expression<Func<T, W>> selector, IEnumerable<string>? includes = null)
