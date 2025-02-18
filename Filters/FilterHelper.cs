@@ -1,4 +1,4 @@
-﻿using CoreLibrary.Filters.ControllerFilterModels;
+﻿using CoreLibrary.Filters.ControllerFilterModels.FilterModels;
 using System.Linq.Expressions;
 
 namespace CoreLibrary.Filters

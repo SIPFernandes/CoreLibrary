@@ -15,6 +15,7 @@ namespace CoreLibrary.Core.Interfaces
         Task<IEnumerable<object>> GetItemsFiltered(GetItemsServiceFilter<TEntity> model);
         Task<TDto> Get(Guid id);
         Task<TDto> Get(Guid id, Expression<Func<TEntity, TDto>> selector);
+        Task<object> GetSelectFilter(Guid id, GetSelectServiceFilter<TEntity> model);
         Task<TDto> Insert(TDto dto);
         Task<IEnumerable<TEntity>> BulkInsert(IEnumerable<TDto> list);
         Task<bool> Validate(TDto dto, object? validationObj = null);

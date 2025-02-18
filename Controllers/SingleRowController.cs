@@ -1,7 +1,11 @@
 ﻿using AutoMapper;
 using CoreLibrary.Core.Entities;
 using CoreLibrary.Core.Interfaces;
+using CoreLibrary.Core.Services;
+using CoreLibrary.Filters.ControllerFilterModels;
+using CoreLibrary.Filters.ServiceFilterModels;
 using CoreLibrary.Shared.Models;
+using DnsClient.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -25,6 +29,27 @@ namespace CoreLibrary.Controllers
             var result = mapper.Map<TForm>(dto);
 
             return Ok(result);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<ActionResult> GetSelectFilter(Guid id, [FromBody] GetSelectControllerFilter model)
+        {
+            try
+            {
+                var serviceFilter = new GetSelectServiceFilter<TEntity>(model);
+
+                var dto = await service.GetSelectFilter(id, serviceFilter);
+
+                return Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                var innerException = ex.InnerException?.Message;
+
+                logger.LogError(innerException ?? ex.Message);
+
+                return StatusCode(500, new { ex.Message, innerException });
+            }
         }
 
         [HttpPut]

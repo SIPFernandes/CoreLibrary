@@ -2,6 +2,7 @@
 using CoreLibrary.Core.Interfaces;
 using CoreLibrary.Filters;
 using CoreLibrary.Filters.ControllerFilterModels;
+using CoreLibrary.Filters.ControllerFilterModels.FilterModels;
 using CoreLibrary.Filters.ServiceFilterModels;
 using CoreLibrary.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
@@ -72,6 +73,34 @@ namespace CoreLibrary.Controllers
             try
             {
                 var dto = await _genericService.Get(id);
+
+                return Ok(dto);
+            }
+            catch (Exception ex)
+            {
+                var innerException = ex.InnerException?.Message;
+
+                _logger.LogError(innerException ?? ex.Message);
+
+                return StatusCode(500, new { ex.Message, innerException });
+            }
+        }
+
+        //GET ENTITY BY ID
+        /// <summary>
+        /// Gets a specific entity by id.
+        /// </summary>
+        /// <response code="200">Success.</response>
+        /// <response code="400">Unable to get the entity due to validation error.</response>
+        /// <response code="404">Entity not found!</response>
+        [HttpGet("{id}")]
+        public virtual async Task<ActionResult> GetSelectFilter(Guid id, [FromBody] GetSelectControllerFilter model)
+        {
+            try
+            {
+                var serviceFilter = new GetSelectServiceFilter<TEntity>(model);
+
+                var dto = await _genericService.GetSelectFilter(id, serviceFilter);
 
                 return Ok(dto);
             }

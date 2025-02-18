@@ -1,4 +1,4 @@
-﻿namespace CoreLibrary.Filters.ControllerFilterModels
+﻿namespace CoreLibrary.Filters.ControllerFilterModels.FilterModels
 {
     public class SelectModel
     {

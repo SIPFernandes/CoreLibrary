@@ -78,6 +78,22 @@ namespace CoreLibrary.Core.Services
             return await _repository.Get(id, selector);
         }
 
+        public virtual async Task<object> GetSelectFilter(Guid id, GetSelectServiceFilter<TEntity> model)
+        {
+            object result;
+
+            if (model.Selector != null)
+            {
+                result = await _repository.Get(id, model.Selector, model.Includes);
+            }
+            else
+            {
+                result = await _repository.Get(id, model.Includes);
+            }
+
+            return result;
+        }
+
         public virtual async Task<TDto> Insert(TDto dto)
         {
             try

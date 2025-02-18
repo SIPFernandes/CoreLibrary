@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using CoreLibrary.Filters.ControllerFilterModels.FilterModels;
+using System.ComponentModel;
 
 namespace CoreLibrary.Filters.ControllerFilterModels
 {
