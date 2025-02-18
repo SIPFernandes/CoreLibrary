@@ -54,9 +54,7 @@ namespace CoreLibrary.Controllers
         {
             try
             {
-                var dtos = await service.GetAll();
-
-                var first = dtos.FirstOrDefault();
+                var first = await service.GetFirst();
 
                 var dto = mapper.Map<TDto>(form);
 
