@@ -228,6 +228,51 @@ namespace CoreLibrary.Infrastructure.Data
             }
         }
 
+        public async Task<T> GetFirst()
+        {
+            using var context = await _dbContextFact.CreateDbContextAsync();
+
+            var entities = context.Set<T>();
+
+            return entities.First();
+        }
+
+        public async Task<T> GetFirst(IEnumerable<string>? includes)
+        {
+            using var context = await _dbContextFact.CreateDbContextAsync();
+
+            var entities = context.Set<T>()
+                .AsQueryable();
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    entities = entities.Include(include);
+                }
+            }
+
+            return entities.First();
+        }
+
+        public async Task<W> GetFirst<W>(Expression<Func<T, W>> selector, IEnumerable<string>? includes = null)
+        {
+            using var context = await _dbContextFact.CreateDbContextAsync();
+
+            var entities = context.Set<T>()
+                .AsQueryable();
+
+            if (includes != null)
+            {
+                foreach (var include in includes)
+                {
+                    entities = entities.Include(include);
+                }
+            }
+
+            return await entities.Select(selector).FirstAsync();
+        }
+
         public async Task<List<T>> GetAll(CancellationTokenSource? token = null)
         {
             using var context = await _dbContextFact.CreateDbContextAsync();

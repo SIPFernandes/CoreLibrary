@@ -37,6 +37,9 @@ namespace CoreLibrary.Core.Interfaces
             where W : BaseEntity where Z : class;
         Task<W> Get<W>(Guid id, Expression<Func<T, W>> selector, IEnumerable<string>? includes = null);
         Task<W> Get<W>(Guid id, Expression<Func<T, W>> selector);
+        Task<T> GetFirst();
+        Task<T> GetFirst(IEnumerable<string>? includes);
+        Task<W> GetFirst<W>(Expression<Func<T, W>> selector, IEnumerable<string>? includes = null);
         Task<T> Insert(T entity, CancellationTokenSource? token = null);
         Task<IEnumerable<T>> BulkInsert(IEnumerable<T> entities, CancellationTokenSource? token = null);
         Task<T> Update(Guid id, T entity, CancellationTokenSource? token = null);

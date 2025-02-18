@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using CoreLibrary.Core.Entities;
 using CoreLibrary.Core.Interfaces;
-using CoreLibrary.Core.Services;
 using CoreLibrary.Filters.ControllerFilterModels;
 using CoreLibrary.Filters.ServiceFilterModels;
 using CoreLibrary.Shared.Models;
@@ -22,9 +21,7 @@ namespace CoreLibrary.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var dtos = await service.GetAll();
-
-            var dto = dtos.FirstOrDefault();
+            var dto = await service.GetFirst();
 
             var result = mapper.Map<TForm>(dto);
 
@@ -32,13 +29,13 @@ namespace CoreLibrary.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult> GetSelectFilter(Guid id, [FromBody] GetSelectControllerFilter model)
+        public async Task<ActionResult> GetSelectFilter([FromBody] GetSelectControllerFilter model)
         {
             try
             {
                 var serviceFilter = new GetSelectServiceFilter<TEntity>(model);
 
-                var dto = await service.GetSelectFilter(id, serviceFilter);
+                var dto = await service.GetFirstSelectFilter(serviceFilter);
 
                 return Ok(dto);
             }

@@ -13,6 +13,8 @@ namespace CoreLibrary.Core.Interfaces
     {
         Task<IEnumerable<TDto>> GetAll();
         Task<IEnumerable<object>> GetItemsFiltered(GetItemsServiceFilter<TEntity> model);
+        Task<TDto> GetFirst();
+        Task<object> GetFirstSelectFilter(GetSelectServiceFilter<TEntity> model);
         Task<TDto> Get(Guid id);
         Task<TDto> Get(Guid id, Expression<Func<TEntity, TDto>> selector);
         Task<object> GetSelectFilter(Guid id, GetSelectServiceFilter<TEntity> model);
