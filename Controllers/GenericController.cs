@@ -17,7 +17,7 @@ namespace CoreLibrary.Controllers
         where TEntity : BaseEntity, IAggregateRoot
         where TDto : BaseDto
     {
-        private readonly IGenericService<IRepository<TEntity>, TDto, TEntity> _genericService = genericService;
+        protected readonly IGenericService<IRepository<TEntity>, TDto, TEntity> _genericService = genericService;
         private readonly ILogger<GenericController<TDto, TEntity>> _logger = logger;
 
         [HttpGet]

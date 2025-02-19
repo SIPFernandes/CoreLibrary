@@ -18,10 +18,13 @@ namespace CoreLibrary.Controllers
         where TDto : BaseDto
         where TForm : BaseForm
     {
+        protected readonly IGenericService<IRepository<TEntity>, TDto, TEntity> _service = service;
+        protected readonly IMapper _mapper = mapper;
+
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var dto = await service.GetFirstOrDefault();
+            var dto = await _service.GetFirstOrDefault();
 
             TForm? result;
 
@@ -31,7 +34,7 @@ namespace CoreLibrary.Controllers
             }
             else
             {
-                result = mapper.Map<TForm>(dto);
+                result = _mapper.Map<TForm>(dto);
             }
 
             return Ok(result);
@@ -44,7 +47,7 @@ namespace CoreLibrary.Controllers
             {
                 var serviceFilter = new GetSelectServiceFilter<TEntity>(model);
 
-                var dto = await service.GetFirstSelectFilter(serviceFilter);
+                var dto = await _service.GetFirstSelectFilter(serviceFilter);
 
                 return Ok(dto);
             }
@@ -63,22 +66,22 @@ namespace CoreLibrary.Controllers
         {
             try
             {
-                var first = await service.GetFirstOrDefault();
+                var first = await _service.GetFirstOrDefault();
 
-                var dto = mapper.Map<TDto>(form);
+                var dto = _mapper.Map<TDto>(form);
 
                 if (first != null)
                 {
                     dto.Id = first.Id;
 
-                    dto = await service.Update(first.Id, dto);
+                    dto = await _service.Update(first.Id, dto);
                 }
                 else
                 {
-                    dto = await service.Insert(dto);
+                    dto = await _service.Insert(dto);
                 }                
 
-                var result = mapper.Map<TForm>(dto);
+                var result = _mapper.Map<TForm>(dto);
 
                 return Ok(result);
             }
