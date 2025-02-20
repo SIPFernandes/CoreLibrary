@@ -2,5 +2,6 @@
 {
     public abstract class BaseForm
     {
+        public required virtual Guid CreatorId { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace CoreLibrary.Controllers
         IMapper mapper, ILogger<SingleRowController<TForm, TDto, TEntity>> logger) : ControllerBase
         where TEntity : BaseEntity, IAggregateRoot
         where TDto : BaseDto
-        where TForm : BaseForm
+        where TForm : SingleRowBaseForm
     {
         protected readonly IGenericService<IRepository<TEntity>, TDto, TEntity> _service = service;
         protected readonly IMapper _mapper = mapper;
