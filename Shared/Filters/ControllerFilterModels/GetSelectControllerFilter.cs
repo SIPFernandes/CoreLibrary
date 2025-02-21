@@ -1,6 +1,6 @@
-﻿using CoreLibrary.Filters.ControllerFilterModels.FilterModels;
+﻿using CoreLibrary.Shared.Filters.ControllerFilterModels.FilterModels;
 
-namespace CoreLibrary.Filters.ControllerFilterModels
+namespace CoreLibrary.Shared.Filters.ControllerFilterModels
 {
     public class GetSelectControllerFilter
     {

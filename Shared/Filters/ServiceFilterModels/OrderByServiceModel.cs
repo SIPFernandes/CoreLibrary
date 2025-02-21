@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace CoreLibrary.Filters.ServiceFilterModels
+namespace CoreLibrary.Shared.Filters.ServiceFilterModels
 {
     public class OrderByServiceModel<TEntity>
     {

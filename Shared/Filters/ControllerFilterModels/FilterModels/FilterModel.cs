@@ -1,4 +1,4 @@
-﻿namespace CoreLibrary.Filters.ControllerFilterModels.FilterModels
+﻿namespace CoreLibrary.Shared.Filters.ControllerFilterModels.FilterModels
 {
     public class FilterModel
     {

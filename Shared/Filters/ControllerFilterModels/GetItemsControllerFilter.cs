@@ -1,7 +1,7 @@
-﻿using CoreLibrary.Filters.ControllerFilterModels.FilterModels;
+﻿using CoreLibrary.Shared.Filters.ControllerFilterModels.FilterModels;
 using System.ComponentModel;
 
-namespace CoreLibrary.Filters.ControllerFilterModels
+namespace CoreLibrary.Shared.Filters.ControllerFilterModels
 {
     public class GetItemsControllerFilter
     {

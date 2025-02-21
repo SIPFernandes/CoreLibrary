@@ -5,7 +5,7 @@ using CoreLibrary.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace CoreLibrary.Controllers
+namespace CoreLibrary.Api.Controllers
 {
     [Route("[controller]/[action]")]
     [ApiController]

@@ -1,5 +1,5 @@
 ﻿using CoreLibrary.Core.Entities;
-using CoreLibrary.Filters.ServiceFilterModels;
+using CoreLibrary.Shared.Filters.ServiceFilterModels;
 using CoreLibrary.Shared.Models;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;

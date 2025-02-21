@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CoreLibrary.Filters.ControllerFilterModels.FilterModels
+namespace CoreLibrary.Shared.Filters.ControllerFilterModels.FilterModels
 {
     public class CombinedFilter
     {

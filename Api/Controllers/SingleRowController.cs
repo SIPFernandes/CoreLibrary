@@ -1,14 +1,14 @@
 ﻿using AutoMapper;
 using CoreLibrary.Core.Entities;
 using CoreLibrary.Core.Interfaces;
-using CoreLibrary.Filters.ControllerFilterModels;
-using CoreLibrary.Filters.ServiceFilterModels;
+using CoreLibrary.Shared.Filters.ServiceFilterModels;
+using CoreLibrary.Shared.Filters.ControllerFilterModels;
 using CoreLibrary.Shared.Models;
 using DnsClient.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace CoreLibrary.Controllers
+namespace CoreLibrary.Api.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]

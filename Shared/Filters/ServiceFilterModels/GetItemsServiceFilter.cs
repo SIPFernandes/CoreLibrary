@@ -1,7 +1,7 @@
-﻿using CoreLibrary.Filters.ControllerFilterModels;
+﻿using CoreLibrary.Shared.Filters.ControllerFilterModels;
 using System.Linq.Expressions;
 
-namespace CoreLibrary.Filters.ServiceFilterModels
+namespace CoreLibrary.Shared.Filters.ServiceFilterModels
 {
     public class GetItemsServiceFilter<TEntity>
     {

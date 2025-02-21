@@ -1,7 +1,7 @@
-﻿using CoreLibrary.Filters.ControllerFilterModels.FilterModels;
+﻿using CoreLibrary.Shared.Filters.ControllerFilterModels.FilterModels;
 using System.Linq.Expressions;
 
-namespace CoreLibrary.Filters
+namespace CoreLibrary.Shared.Filters
 {
     public static class FilterHelper<T>
     {

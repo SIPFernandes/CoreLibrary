@@ -1,14 +1,14 @@
 ﻿using CoreLibrary.Core.Entities;
 using CoreLibrary.Core.Interfaces;
-using CoreLibrary.Filters;
-using CoreLibrary.Filters.ControllerFilterModels;
-using CoreLibrary.Filters.ControllerFilterModels.FilterModels;
-using CoreLibrary.Filters.ServiceFilterModels;
+using CoreLibrary.Shared.Filters.ServiceFilterModels;
+using CoreLibrary.Shared.Filters;
+using CoreLibrary.Shared.Filters.ControllerFilterModels;
+using CoreLibrary.Shared.Filters.ControllerFilterModels.FilterModels;
 using CoreLibrary.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace CoreLibrary.Controllers
+namespace CoreLibrary.Api.Controllers
 {
     [ApiController]
     [Route("[controller]/[action]")]
