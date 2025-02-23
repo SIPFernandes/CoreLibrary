@@ -7,10 +7,7 @@ namespace CoreLibrary.Shared.Filters
     {
         public static Expression<Func<T, bool>> BuildExpression(FilterModel filter, ParameterExpression? parameter = null)
         {
-            if (parameter is null)
-            {
-                parameter = Expression.Parameter(typeof(T), "e");
-            }
+            parameter ??= Expression.Parameter(typeof(T), "e");
 
             var property = Expression.Property(parameter, filter.PropertyName);
 
@@ -18,9 +15,16 @@ namespace CoreLibrary.Shared.Filters
 
             Expression value;
 
-            if (propertyType == typeof(Guid))
+            if (propertyType == typeof(Guid) || propertyType == typeof(Guid?))
             {
-                value = Expression.Constant(Guid.Parse(filter.Value));
+                if (Guid.TryParse(filter.Value, out Guid parsedValue))
+                {
+                    value = Expression.Constant(parsedValue, propertyType);
+                }
+                else
+                {
+                    value = Expression.Constant(null, propertyType);
+                }
             }
             else
             {
