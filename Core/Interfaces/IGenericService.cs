@@ -23,10 +23,8 @@ namespace CoreLibrary.Core.Interfaces
         Task<bool> Validate(TDto dto, object? validationObj = null);
         Task<TDto?> Update(Guid id, TDto dto);
         Task<IEnumerable<TEntity>?> BulkAddOrUpdate(IEnumerable<TDto> dtos);
-        Task UpdatePropertyInMultipleItems(Expression<Func<TEntity, bool>> expression,
-            Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyExpression);
         Task UpdatePropertiesInMultipleItems(Expression<Func<TEntity, bool>> expression,
-            List<Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>>> setPropertyExpressionList);
+            Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyExpression);
         Task Delete(TDto dto);
         Task DeleteById(Guid id);
         Task BulkDeleteById(IEnumerable<Guid> id);

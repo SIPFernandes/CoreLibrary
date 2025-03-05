@@ -200,27 +200,12 @@ namespace CoreLibrary.Core.Services
             }
         }
 
-        public async Task UpdatePropertyInMultipleItems(Expression<Func<TEntity, bool>> expression,
+        //To update multiple properties just call SetProperty in the same chain multiple times
+        //Ex x => x.SetProperty(e => e.Property1, e => someValue).SetProperty(e => e.Property2, e => anotherValue)
+        public async Task UpdatePropertiesInMultipleItems(Expression<Func<TEntity, bool>> expression,
             Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyExpression)
         {
             await _repository.UpdateMultipleLeafType(expression, setPropertyExpression);
-        }
-
-        public async Task UpdatePropertiesInMultipleItems(Expression<Func<TEntity, bool>> expression,
-            List<Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>>> setPropertyExpressionList)
-        {
-            Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyExpressionResult = set => set;
-
-            foreach (var setPropertyExpression in setPropertyExpressionList)
-            {
-                var call = (MethodCallExpression)setPropertyExpression.Body;
-                setPropertyExpressionResult = Expression.Lambda<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>>(
-                    Expression.Call(setPropertyExpressionResult.Body, call.Method, call.Arguments),
-                    setPropertyExpression.Parameters
-                );
-            }
-
-            await _repository.UpdateMultipleLeafType(expression, setPropertyExpressionResult);
         }
 
         public virtual async Task Delete(TDto dto)
