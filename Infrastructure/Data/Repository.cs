@@ -482,7 +482,7 @@ namespace CoreLibrary.Infrastructure.Data
                 await context.DisposeAsync();
             }
 
-            return entity;
+            return entry.Entity;
         }
 
         public virtual async Task<IEnumerable<W>> UpdateMultipleChilds<W>(IEnumerable<W> entitiesToUpdate,
