@@ -472,6 +472,7 @@ namespace CoreLibrary.Infrastructure.Data
 
             entry.Property(x => x.Id).IsModified = false;
             entry.Property(x => x.CreatedAt).IsModified = false;
+            entry.Property(x => x.CreatorId).IsModified = false;
             entry.Property(x => x.IsDeleted).IsModified = false;
 
             if (saveChanges)
@@ -529,6 +530,7 @@ namespace CoreLibrary.Infrastructure.Data
 
                         entry.Property(x => x.Id).IsModified = false;
                         entry.Property(x => x.CreatedAt).IsModified = false;
+                        entry.Property(x => x.CreatorId).IsModified = false;
                         entry.Property(x => x.IsDeleted).IsModified = false;
                     }
                 }
