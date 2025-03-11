@@ -1,8 +1,9 @@
-﻿using System.ComponentModel;
+﻿using CoreLibrary.Core.Interfaces;
+using System.ComponentModel;
 
 namespace CoreLibrary.Shared.Models
 {
-    public abstract class BaseDto(Guid userId)
+    public abstract class BaseDto(Guid userId) : IBinderInterface
     {
         [DefaultValue("00000000-0000-0000-0000-000000000000")]
         public Guid Id { get; set; }
