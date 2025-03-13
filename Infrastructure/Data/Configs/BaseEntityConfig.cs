@@ -10,7 +10,7 @@ namespace CoreLibrary.Infrastructure.Data.Configs
         {
             builder.UseTpcMappingStrategy();
 
-            builder.HasQueryFilter(x => !x.IsDeleted);
+            builder.HasQueryFilter(x => x.DeletedAt == null);
             builder.Property(b => b.CreatedAt).HasDefaultValueSql("getutcdate()");
             builder.Property(b => b.ModifiedAt).HasDefaultValueSql("getutcdate()");
         }
