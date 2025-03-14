@@ -412,6 +412,17 @@ namespace CoreLibrary.Infrastructure.Data
             return await GetItemsList(query, selector, skip, take, token);
         }
 
+        public async Task<int> Count(Expression<Func<T, bool>>? filter = null, CancellationTokenSource? token = null)
+        {
+            using var context = await _dbContextFact.CreateDbContextAsync();
+
+            var entities = context.Set<T>();
+
+            var query = filter == null ? entities : entities.Where(filter);
+
+            return query.Count();
+        }
+
         public virtual async Task<T> Insert(T entity, CancellationTokenSource? token = null)
         {
             if (entity == null)

@@ -60,6 +60,36 @@ namespace CoreLibrary.Api.Controllers
             }
         }
 
+        [HttpPost]
+        public virtual async Task<IActionResult> CountFiltered([FromBody] CombinedFilter? filter)
+        {
+            try
+            {
+                int count;
+
+                if (filter == null)
+                {
+                    count = await _genericService.CountFiltered();
+                }
+                else
+                {
+                    var filterExpression = FilterHelper<TEntity>.CombineExpressions(filter);
+
+                    count = await _genericService.CountFiltered(filterExpression);
+                }
+
+                return Ok(count);
+            }
+            catch (Exception ex)
+            {
+                var innerException = ex.InnerException?.Message;
+
+                _logger.LogError(innerException ?? ex.Message);
+
+                return StatusCode(500, new { ex.Message, innerException });
+            }
+        }
+
         //GET ENTITY BY ID
         /// <summary>
         /// Gets a specific entity by id.

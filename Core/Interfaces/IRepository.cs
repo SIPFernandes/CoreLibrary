@@ -30,6 +30,7 @@ namespace CoreLibrary.Core.Interfaces
             Expression<Func<T, Z>> orderedBy, bool descending, Expression<Func<T, bool>>? filter = null,
             int skip = 0, int take = 10, IEnumerable<string>? includes = null,
             CancellationTokenSource? token = null);
+        Task<int> Count(Expression<Func<T, bool>>? filter = null, CancellationTokenSource? token = null);
         Task<T> Get(Guid id);
         Task<T> Get(Guid id, IEnumerable<string>? includes = null);
         Task<W> Get<W>(Guid id, IEnumerable<string>? includes = null);

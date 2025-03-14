@@ -67,6 +67,11 @@ namespace CoreLibrary.Core.Services
             return result;
         }
 
+        public virtual async Task<int> CountFiltered(Expression<Func<TEntity, bool>>? filter = null)
+        {
+            return await _repository.Count(filter);
+        }
+
         public virtual async Task<TDto?> GetFirstOrDefault()
         {
             var entity = await _repository.GetFirstOrDefault();
