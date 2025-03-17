@@ -9,7 +9,7 @@ namespace CoreLibrary.Shared.Filters.ServiceFilterModels
         {
             if (model.Selector != null)
             {
-                Selector = FilterHelper<TEntity>.GetSelectExpression(model.Selector.Properties);
+                Selector = ExpressionHelper<TEntity>.GetSelectExpression(model.Selector.Properties);
             }
 
             Includes = model.Includes;

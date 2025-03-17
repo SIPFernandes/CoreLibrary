@@ -7,6 +7,7 @@ using CoreLibrary.Shared.Filters.ControllerFilterModels.FilterModels;
 using CoreLibrary.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Linq.Expressions;
 
 namespace CoreLibrary.Api.Controllers
 {
@@ -73,7 +74,7 @@ namespace CoreLibrary.Api.Controllers
                 }
                 else
                 {
-                    var filterExpression = FilterHelper<TEntity>.CombineExpressions(filter);
+                    var filterExpression = ExpressionHelper<TEntity>.CombineExpressions(filter);
 
                     count = await _genericService.CountFiltered(filterExpression);
                 }
@@ -291,6 +292,44 @@ namespace CoreLibrary.Api.Controllers
             }
         }
 
+        [HttpPut]
+        public virtual async Task<ActionResult> UpdateWhere([FromBody] UpdateWhereControllerFilter updateModel)
+        {
+            if (updateModel == null || !ModelState.IsValid)
+            {
+                var errorMessage = ModelState.Values.SelectMany(x => x.Errors)
+                        .Select(x => x.ErrorMessage);
+
+                return BadRequest(errorMessage);
+            }
+
+            try
+            {
+                Expression<Func<TEntity, bool>>? expression = null;
+
+                if (updateModel.Filters != null)
+                {
+                    expression = ExpressionHelper<TEntity>.CombineExpressions(updateModel.Filters);
+                }
+
+                var setPropertyExpression = ExpressionHelper<TEntity>.BuildSetPropertyExpression(updateModel.UpdateProperties);
+
+                await _genericService.UpdatePropertiesInMultipleItems(expression, setPropertyExpression);
+
+                _logger.LogInformation($"{typeof(TEntity).FullName} updated according to the expressions: {expression}, {setPropertyExpression}");
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                var innerException = ex.InnerException?.Message;
+
+                _logger.LogError(innerException ?? ex.Message);
+
+                return StatusCode(500, new { ex.Message, innerException });
+            }
+        } 
+
         //DELETE ENITTY BY ID
         /// <summary>
         /// Deletes a specific entity by id.
@@ -360,7 +399,7 @@ namespace CoreLibrary.Api.Controllers
 
             try
             {
-                var expression = FilterHelper<TEntity>.CombineExpressions(combinedFilter);
+                var expression = ExpressionHelper<TEntity>.CombineExpressions(combinedFilter);
 
                 await _genericService.DeleteWhere(expression);
 

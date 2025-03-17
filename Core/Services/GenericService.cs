@@ -207,7 +207,7 @@ namespace CoreLibrary.Core.Services
 
         //To update multiple properties just call SetProperty in the same chain multiple times
         //Ex x => x.SetProperty(e => e.Property1, e => someValue).SetProperty(e => e.Property2, e => anotherValue)
-        public async Task UpdatePropertiesInMultipleItems(Expression<Func<TEntity, bool>> expression,
+        public async Task UpdatePropertiesInMultipleItems(Expression<Func<TEntity, bool>>? expression,
             Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyExpression)
         {
             await _repository.UpdateMultipleLeafType(expression, setPropertyExpression);

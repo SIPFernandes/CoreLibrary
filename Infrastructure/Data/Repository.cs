@@ -570,15 +570,20 @@ namespace CoreLibrary.Infrastructure.Data
             return entitiesToUpdate;
         }
 
-        public async Task UpdateMultipleLeafType(Expression<Func<T, bool>> expression,
+        public async Task UpdateMultipleLeafType(Expression<Func<T, bool>>? expression,
             Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setPropertyExpression,
             CancellationTokenSource? token = null)
         {
             using var context = await _dbContextFact.CreateDbContextAsync();
 
-            var entities = context.Set<T>();
+            var entities = context.Set<T>().AsQueryable();
 
-            await entities.Where(expression).ExecuteUpdateAsync(setPropertyExpression);
+            if (expression != null)
+            {
+                entities = entities.Where(expression);
+            }
+
+            await entities.ExecuteUpdateAsync(setPropertyExpression);
         }
 
         protected async Task<List<T>> GetNItemsWhere(IIncludableQueryable<T, object> include,

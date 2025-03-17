@@ -48,7 +48,7 @@ namespace CoreLibrary.Core.Interfaces
             Expression<Func<W, bool>> expression, CancellationTokenSource? token = null,
             Action<DbSet<W>, W, W>? updateAction = null, bool deleteMissing = true) 
             where W : BaseEntity;
-        Task UpdateMultipleLeafType(Expression<Func<T, bool>> expression,
+        Task UpdateMultipleLeafType(Expression<Func<T, bool>>? expression,
             Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setPropertyExpression,
             CancellationTokenSource? token = null);
         Task Delete(T entity, CancellationTokenSource? token = null);

@@ -1,9 +1,11 @@
-﻿using CoreLibrary.Shared.Filters.ControllerFilterModels.FilterModels;
+﻿using CoreLibrary.Shared.Filters.ControllerFilterModels;
+using CoreLibrary.Shared.Filters.ControllerFilterModels.FilterModels;
+using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 
 namespace CoreLibrary.Shared.Filters
 {
-    public static class FilterHelper<T>
+    public static class ExpressionHelper<T>
     {
         public static Expression<Func<T, bool>> BuildExpression(FilterModel filter, ParameterExpression? parameter = null)
         {
@@ -13,32 +15,16 @@ namespace CoreLibrary.Shared.Filters
 
             var propertyType = property.Type;
 
-            Expression value;
-
-            if (propertyType == typeof(Guid) || propertyType == typeof(Guid?))
-            {
-                if (Guid.TryParse(filter.Value, out Guid parsedValue))
-                {
-                    value = Expression.Constant(parsedValue, propertyType);
-                }
-                else
-                {
-                    value = Expression.Constant(null, propertyType);
-                }
-            }
-            else
-            {
-                value = Expression.Constant(Convert.ChangeType(filter.Value, propertyType));
-            }
+            Expression value = GetValueExpression(filter.Value, propertyType);
 
             BinaryExpression comparison = filter.Operator switch
             {
                 nameof(Expression.Equal) => Expression.Equal(property, value),
                 nameof(Expression.NotEqual) => Expression.NotEqual(property, value),
                 nameof(Expression.GreaterThan) => Expression.GreaterThan(property, value),
-                nameof(Expression.GreaterThanOrEqual) => Expression.GreaterThan(property, value),
-                nameof(Expression.LessThan) => Expression.GreaterThan(property, value),
-                nameof(Expression.LessThanOrEqual) => Expression.GreaterThan(property, value),
+                nameof(Expression.GreaterThanOrEqual) => Expression.GreaterThanOrEqual(property, value),
+                nameof(Expression.LessThan) => Expression.LessThan(property, value),
+                nameof(Expression.LessThanOrEqual) => Expression.LessThanOrEqual(property, value),
 
                 _ => throw new NotSupportedException($"Operator {filter.Operator} is not supported. " +
                 $"Supported operators are: {nameof(Expression.Equal)}, {nameof(Expression.NotEqual)}, {nameof(Expression.GreaterThan)}," +
@@ -98,6 +84,63 @@ namespace CoreLibrary.Shared.Filters
 
             var lambda = Expression.Lambda<Func<T, IDictionary<string, object>>>(newExpression, parameter);
             return lambda;
+        }
+
+        public static Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> BuildSetPropertyExpression(PropertyUpdateModel[] propertyValues)
+        {
+            var parameter = Expression.Parameter(typeof(SetPropertyCalls<T>), "e");
+            Expression body = parameter;
+
+            foreach (var item in propertyValues)
+            {
+                var propertyName = item.PropertyName;
+                var value = item.Value;
+
+                var setPropertyMethod = typeof(SetPropertyCalls<T>).GetMethod("SetProperty")!;
+
+                var propertyNameExpression = Expression.Constant(propertyName);
+
+                var propertyType = (typeof(T).GetProperty(propertyName)?.PropertyType) ??
+                    throw new InvalidOperationException($"Property '{propertyName}' not found on type '{typeof(T).Name}'.");
+
+                var valueExpression = GetValueExpression(value, propertyType);
+
+                body = Expression.Call(body, setPropertyMethod, propertyNameExpression, valueExpression);
+            }
+
+            return Expression.Lambda<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>>(body, parameter);
+        }
+
+        private static Expression GetValueExpression(string value, Type propertyType)
+        {
+            Expression valueExpression;
+
+            if (propertyType == typeof(Guid) || propertyType == typeof(Guid?))
+            {
+                if (Guid.TryParse(value, out Guid parsedValue))
+                {
+                    valueExpression = Expression.Constant(parsedValue, propertyType);
+                }
+                else
+                {
+                    valueExpression = Expression.Constant(null, propertyType);
+                }
+            }
+            else
+            {
+                try
+                {
+                    var convertType = Convert.ChangeType(value, propertyType);
+
+                    valueExpression = Expression.Constant(convertType);
+                }
+                catch (Exception ex)
+                {
+                    throw new InvalidOperationException($"Failed to convert value '{value}' to type '{propertyType.Name}'.", ex);
+                }
+            }
+
+            return valueExpression;
         }
     }
 }

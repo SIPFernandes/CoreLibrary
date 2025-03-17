@@ -9,24 +9,24 @@ namespace CoreLibrary.Shared.Filters.ServiceFilterModels
         {
             if (model.Selector != null)
             {
-                Selector = FilterHelper<TEntity>.GetSelectExpression(model.Selector.Properties);
+                Selector = ExpressionHelper<TEntity>.GetSelectExpression(model.Selector.Properties);
             }
 
             if (model.Filter != null)
             {
-                Filter = FilterHelper<TEntity>.BuildExpression(model.Filter);
+                Filter = ExpressionHelper<TEntity>.BuildExpression(model.Filter);
             }
 
             if (model.CombinedFilters != null)
             {
-                Filter = FilterHelper<TEntity>.CombineExpressions(model.CombinedFilters);
+                Filter = ExpressionHelper<TEntity>.CombineExpressions(model.CombinedFilters);
             }
 
             if (model.OrderdBy != null)
             {
                 OrderedBy = new OrderByServiceModel<TEntity>()
                 {
-                    OrderBy = FilterHelper<TEntity>.OrderByProperty(model.OrderdBy.PropertyName),
+                    OrderBy = ExpressionHelper<TEntity>.OrderByProperty(model.OrderdBy.PropertyName),
                     Descending = model.OrderdBy.Descending
                 };
             }
