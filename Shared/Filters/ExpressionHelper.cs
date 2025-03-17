@@ -96,7 +96,7 @@ namespace CoreLibrary.Shared.Filters
                 var propertyName = item.PropertyName;
                 var value = item.Value;
 
-                var setPropertyMethod = typeof(SetPropertyCalls<T>).GetMethod("SetProperty")!;
+                var setPropertyMethod = typeof(SetPropertyCalls<T>).GetMethod("SetProperty", [typeof(string), typeof(object)])!;
 
                 var propertyNameExpression = Expression.Constant(propertyName);
 
