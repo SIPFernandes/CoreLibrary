@@ -101,8 +101,11 @@ namespace CoreLibrary.Shared.Filters
                     x.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == typeof(Func<,>)) ??
                     throw new InvalidOperationException("SetProperty method not found.");
 
-                var propertyType = (typeof(T).GetProperty(propertyName)?.PropertyType) ??
+                var propertyInfo = typeof(T).GetProperties()
+                    .FirstOrDefault(p => string.Equals(p.Name, propertyName, StringComparison.OrdinalIgnoreCase)) ??
                     throw new InvalidOperationException($"Property '{propertyName}' not found on type '{typeof(T).Name}'.");
+
+                var propertyType = propertyInfo.PropertyType;
 
                 var setPropertyMethod = setPropertyMethodDefinition.MakeGenericMethod(propertyType);
 
