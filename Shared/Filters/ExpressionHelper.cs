@@ -96,16 +96,28 @@ namespace CoreLibrary.Shared.Filters
                 var propertyName = item.PropertyName;
                 var value = item.Value;
 
-                var setPropertyMethod = typeof(SetPropertyCalls<T>).GetMethod("SetProperty", [typeof(string), typeof(object)])!;
-
-                var propertyNameExpression = Expression.Constant(propertyName);
+                var setPropertyMethodDefinition = typeof(SetPropertyCalls<T>).GetMethods()
+                    .FirstOrDefault(x => x.Name == "SetProperty" && x.GetParameters().Length == 2 &&
+                    x.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == typeof(Func<,>))!;
 
                 var propertyType = (typeof(T).GetProperty(propertyName)?.PropertyType) ??
                     throw new InvalidOperationException($"Property '{propertyName}' not found on type '{typeof(T).Name}'.");
 
-                var valueExpression = GetValueExpression(value, propertyType);
+                var setPropertyMethod = setPropertyMethodDefinition.MakeGenericMethod(propertyType);
 
-                body = Expression.Call(body, setPropertyMethod, propertyNameExpression, valueExpression);
+                var propertyParameter = Expression.Parameter(typeof(T), "x");
+                var propertyExpression = Expression.Lambda(
+                    Expression.Property(propertyParameter, propertyName),
+                    propertyParameter
+                );
+
+                var valueParameter = Expression.Parameter(typeof(T), "x");
+                var valueExpression = Expression.Lambda(
+                    GetValueExpression(value, propertyType),
+                    valueParameter
+                );
+
+                body = Expression.Call(body, setPropertyMethod, propertyExpression, valueExpression);
             }
 
             return Expression.Lambda<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>>(body, parameter);
