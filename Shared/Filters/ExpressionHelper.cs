@@ -15,7 +15,7 @@ namespace CoreLibrary.Shared.Filters
 
             var propertyType = property.Type;
 
-            Expression value = GetValueExpression(filter.Value, propertyType);
+            Expression value = GetValueExpressionBody(filter.Value, propertyType);
 
             BinaryExpression comparison = filter.Operator switch
             {
@@ -113,10 +113,10 @@ namespace CoreLibrary.Shared.Filters
                 );
 
                 var valueParameter = Expression.Parameter(typeof(T), "x");
-                var valueExpression = Expression.Lambda(
-                    GetValueExpression(value, propertyType),
-                    valueParameter
-                );
+
+                var valueExpressionBody = GetValueExpressionBody(value, propertyType);
+
+                var valueExpression = Expression.Lambda(valueExpressionBody, valueParameter);
 
                 body = Expression.Call(body, setPropertyMethod, propertyExpression, valueExpression);
             }
@@ -124,7 +124,7 @@ namespace CoreLibrary.Shared.Filters
             return Expression.Lambda<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>>(body, parameter);
         }
 
-        private static Expression GetValueExpression(string value, Type propertyType)
+        private static Expression GetValueExpressionBody(string value, Type propertyType)
         {
             Expression valueExpression;
 
