@@ -110,7 +110,7 @@ namespace CoreLibrary.Api.Controllers
             }
             catch (EntityDoesNotExistException ex)
             {
-                return NotFound(ex);
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -142,7 +142,7 @@ namespace CoreLibrary.Api.Controllers
             }
             catch(EntityDoesNotExistException ex)
             {
-                return NotFound(ex);
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
@@ -364,7 +364,7 @@ namespace CoreLibrary.Api.Controllers
             }
             catch (EntityDoesNotExistException ex)
             {
-                return NotFound(ex);
+                return NotFound(ex.Message);
             }
             catch (Exception ex)
             {
