@@ -71,7 +71,8 @@ namespace CoreLibrary.Infrastructure.Data
 
         public virtual async Task<T> DeleteById(Guid id, CancellationTokenSource? token = null)
         {
-            var entity = await Get(id);
+            var entity = await Get(id) ?? 
+                throw new EntityDoesNotExistException();
 
             await Delete(entity, token);
 

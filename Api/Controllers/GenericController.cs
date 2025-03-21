@@ -8,6 +8,7 @@ using CoreLibrary.Shared.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System.Linq.Expressions;
+using CoreLibrary.Core.Exceptions;
 
 namespace CoreLibrary.Api.Controllers
 {
@@ -107,6 +108,10 @@ namespace CoreLibrary.Api.Controllers
 
                 return Ok(dto);
             }
+            catch (EntityDoesNotExistException ex)
+            {
+                return NotFound(ex);
+            }
             catch (Exception ex)
             {
                 var innerException = ex.InnerException?.Message;
@@ -134,6 +139,10 @@ namespace CoreLibrary.Api.Controllers
                 var dto = await _genericService.GetSelectFilter(id, serviceFilter);
 
                 return Ok(dto);
+            }
+            catch(EntityDoesNotExistException ex)
+            {
+                return NotFound(ex);
             }
             catch (Exception ex)
             {
@@ -352,6 +361,10 @@ namespace CoreLibrary.Api.Controllers
                 _logger.LogInformation($"{typeof(TEntity).FullName} deleted according to given id: {id}");
 
                 return Ok();
+            }
+            catch (EntityDoesNotExistException ex)
+            {
+                return NotFound(ex);
             }
             catch (Exception ex)
             {
