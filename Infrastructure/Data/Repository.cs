@@ -426,10 +426,7 @@ namespace CoreLibrary.Infrastructure.Data
 
         public virtual async Task<T> Insert(T entity, CancellationTokenSource? token = null)
         {
-            if (entity == null)
-            {
-                throw new ArgumentNullException("entity");
-            }
+            ArgumentNullException.ThrowIfNull(entity);
 
             using var context = await _dbContextFact.CreateDbContextAsync();
 
@@ -444,10 +441,7 @@ namespace CoreLibrary.Infrastructure.Data
 
         public virtual async Task<IEnumerable<T>> BulkInsert(IEnumerable<T> items, CancellationTokenSource? token = null)
         {
-            if (items == null)
-            {
-                throw new ArgumentNullException(nameof(items));
-            }
+            ArgumentNullException.ThrowIfNull(items);
 
             using var context = await _dbContextFact.CreateDbContextAsync();
 
@@ -466,9 +460,26 @@ namespace CoreLibrary.Infrastructure.Data
 
             using var context = await _dbContextFact.CreateDbContextAsync();
 
-            return await Update(id, entity, token, context, true);
+            try
+            {
+                return await Update(id, entity, token, context, true);
+            }
+            catch (DbUpdateConcurrencyException ex)
+            {
+                var entry = ex.Entries.Single();
+                var databaseEntity = entry.GetDatabaseValues();
+                if (databaseEntity == null)
+                {
+                    throw new EntityDoesNotExistException();
+                }
+                else
+                {
+                    throw;
+                }
+            }
         }
 
+        //Useful when extending the repository and wanting to call update for multiple entities and saving only once
         protected virtual async Task<T> Update(Guid id, T entity,
             CancellationTokenSource? token = null, DbContext? context = null, bool saveChanges = true)
         {

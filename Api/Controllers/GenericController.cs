@@ -255,6 +255,10 @@ namespace CoreLibrary.Api.Controllers
                     return Ok(result);
                 }
             }
+            catch (EntityDoesNotExistException ex)
+            {
+                return NotFound(ex.Message);
+            }
             catch (Exception ex)
             {
                 var innerException = ex.InnerException?.Message;
