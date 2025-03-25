@@ -52,6 +52,15 @@ namespace CoreLibrary.Api.Controllers
 
                 return Ok(dtos);
             }
+            catch (Exception ex) when (ex is NotSupportedException ||
+            ex is ArgumentException || ex is InvalidOperationException)
+            {
+                var innerException = ex.InnerException?.Message;
+
+                _logger.LogError(innerException ?? ex.Message);
+
+                return BadRequest(ex.Message);
+            }
             catch (Exception ex)
             {
                 var innerException = ex.InnerException?.Message;
@@ -81,6 +90,15 @@ namespace CoreLibrary.Api.Controllers
                 }
 
                 return Ok(count);
+            }
+            catch (Exception ex) when (ex is NotSupportedException ||
+            ex is ArgumentException || ex is InvalidOperationException)
+            {
+                var innerException = ex.InnerException?.Message;
+
+                _logger.LogError(innerException ?? ex.Message);
+
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
@@ -143,6 +161,14 @@ namespace CoreLibrary.Api.Controllers
             catch(EntityDoesNotExistException ex)
             {
                 return NotFound(ex.Message);
+            }
+            catch (ArgumentException ex)
+            {
+                var innerException = ex.InnerException?.Message;
+
+                _logger.LogError(innerException ?? ex.Message);
+
+                return BadRequest(ex.Message);
             }
             catch (Exception ex)
             {
