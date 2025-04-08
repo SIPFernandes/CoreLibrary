@@ -142,6 +142,11 @@ namespace CoreLibrary.Shared.Filters
                     valueExpression = Expression.Constant(null, propertyType);
                 }
             }
+            else if (propertyType == typeof(byte[]))
+            {
+                var byteArray = Convert.FromBase64String(value);
+                valueExpression = Expression.Constant(byteArray, propertyType);
+            }
             else
             {
                 try
