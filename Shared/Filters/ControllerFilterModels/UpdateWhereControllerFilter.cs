@@ -11,6 +11,6 @@ namespace CoreLibrary.Shared.Filters.ControllerFilterModels
     public class PropertyUpdateModel
     {
         public required string PropertyName { get; set; }
-        public required string Value { get; set; }
+        public required string? Value { get; set; }
     }
 }

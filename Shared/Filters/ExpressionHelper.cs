@@ -127,11 +127,20 @@ namespace CoreLibrary.Shared.Filters
             return Expression.Lambda<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>>(body, parameter);
         }
 
-        private static Expression GetValueExpressionBody(string value, Type propertyType)
+        private static Expression GetValueExpressionBody(string? value, Type propertyType)
         {
             Expression valueExpression;
 
-            if (propertyType == typeof(Guid) || propertyType == typeof(Guid?))
+            if (value == null)
+            {
+                if (!IsNullableType(propertyType))
+                {
+                    throw new InvalidOperationException($"Cannot assign null to non-nullable property of type '{propertyType.Name}'.");
+                }
+
+                valueExpression = Expression.Constant(null, propertyType);
+            }
+            else if (propertyType == typeof(Guid))
             {
                 if (Guid.TryParse(value, out Guid parsedValue))
                 {
@@ -139,7 +148,7 @@ namespace CoreLibrary.Shared.Filters
                 }
                 else
                 {
-                    valueExpression = Expression.Constant(null, propertyType);
+                    throw new InvalidOperationException($"Invalid Guid value for property '{propertyType.Name}'.");
                 }
             }
             else if (propertyType == typeof(byte[]))
@@ -163,5 +172,12 @@ namespace CoreLibrary.Shared.Filters
 
             return valueExpression;
         }
+
+
+        private static bool IsNullableType(Type type)
+        {
+            return !type.IsValueType || (type.IsGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>));
+        }
+
     }
 }
