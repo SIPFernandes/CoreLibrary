@@ -91,15 +91,15 @@ namespace CoreLibrary.Shared.Filters
             var parameter = Expression.Parameter(typeof(SetPropertyCalls<T>), "e");
             Expression body = parameter;
 
+            var setPropertyMethodDefinition = typeof(SetPropertyCalls<T>).GetMethods()
+                    .FirstOrDefault(x => x.Name == "SetProperty" && x.GetParameters().Length == 2 &&
+                    x.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == typeof(Func<,>)) ??
+                    throw new InvalidOperationException("SetProperty method not found.");
+
             foreach (var item in propertyValues)
             {
                 var propertyName = item.PropertyName;
                 var value = item.Value;
-
-                var setPropertyMethodDefinition = typeof(SetPropertyCalls<T>).GetMethods()
-                    .FirstOrDefault(x => x.Name == "SetProperty" && x.GetParameters().Length == 2 &&
-                    x.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == typeof(Func<,>)) ??
-                    throw new InvalidOperationException("SetProperty method not found.");
 
                 var propertyInfo = typeof(T).GetProperties()
                     .FirstOrDefault(p => string.Equals(p.Name, propertyName, StringComparison.OrdinalIgnoreCase)) ??
