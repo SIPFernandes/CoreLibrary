@@ -2,12 +2,21 @@
 using CoreLibrary.Shared.Filters.ControllerFilterModels.FilterModels;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace CoreLibrary.Shared.Filters
 {
     public static class ExpressionHelper<T>
     {
-        public static Expression<Func<T, bool>> BuildExpression(FilterModel filter, ParameterExpression? parameter = null)
+        private static readonly MethodInfo _containsMethodDefinition = typeof(string).GetMethod("Contains", [typeof(string)]) ??
+            throw new InvalidOperationException("Contains method not found.");
+        private static readonly MethodInfo _setPropertyMethodDefinition = typeof(SetPropertyCalls<T>).GetMethods()
+                    .FirstOrDefault(x => x.Name == "SetProperty" && x.GetParameters().Length == 2 &&
+                    x.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == typeof(Func<,>)) ??
+                    throw new InvalidOperationException("SetProperty method not found.");
+
+        public static Expression<Func<T, bool>> BuildExpression(FilterModel filter,
+            ParameterExpression? parameter = null)
         {
             parameter ??= Expression.Parameter(typeof(T), "e");
 
@@ -17,7 +26,7 @@ namespace CoreLibrary.Shared.Filters
 
             Expression value = GetValueExpressionBody(filter.Value, propertyType);
 
-            BinaryExpression comparison = filter.Operator switch
+            Expression comparison = filter.Operator switch
             {
                 nameof(Expression.Equal) => Expression.Equal(property, value),
                 nameof(Expression.NotEqual) => Expression.NotEqual(property, value),
@@ -25,10 +34,11 @@ namespace CoreLibrary.Shared.Filters
                 nameof(Expression.GreaterThanOrEqual) => Expression.GreaterThanOrEqual(property, value),
                 nameof(Expression.LessThan) => Expression.LessThan(property, value),
                 nameof(Expression.LessThanOrEqual) => Expression.LessThanOrEqual(property, value),
+                "Contains" => Expression.Call(property, _containsMethodDefinition, value),
 
                 _ => throw new NotSupportedException($"Operator {filter.Operator} is not supported. " +
                 $"Supported operators are: {nameof(Expression.Equal)}, {nameof(Expression.NotEqual)}, {nameof(Expression.GreaterThan)}," +
-                $" {nameof(Expression.GreaterThanOrEqual)}, {nameof(Expression.LessThan)}, {nameof(Expression.LessThanOrEqual)}"),
+                $" {nameof(Expression.GreaterThanOrEqual)}, {nameof(Expression.LessThan)}, {nameof(Expression.LessThanOrEqual)} and Contains for string type"),
             };
             return Expression.Lambda<Func<T, bool>>(comparison, parameter);
         }
@@ -91,11 +101,6 @@ namespace CoreLibrary.Shared.Filters
             var parameter = Expression.Parameter(typeof(SetPropertyCalls<T>), "e");
             Expression body = parameter;
 
-            var setPropertyMethodDefinition = typeof(SetPropertyCalls<T>).GetMethods()
-                    .FirstOrDefault(x => x.Name == "SetProperty" && x.GetParameters().Length == 2 &&
-                    x.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == typeof(Func<,>)) ??
-                    throw new InvalidOperationException("SetProperty method not found.");
-
             foreach (var item in propertyValues)
             {
                 var propertyName = item.PropertyName;
@@ -107,7 +112,7 @@ namespace CoreLibrary.Shared.Filters
 
                 var propertyType = propertyInfo.PropertyType;
 
-                var setPropertyMethod = setPropertyMethodDefinition.MakeGenericMethod(propertyType);
+                var setPropertyMethod = _setPropertyMethodDefinition.MakeGenericMethod(propertyType);
 
                 var propertyParameter = Expression.Parameter(typeof(T), "x");
                 var propertyExpression = Expression.Lambda(
