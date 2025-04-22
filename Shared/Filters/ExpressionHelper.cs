@@ -145,7 +145,7 @@ namespace CoreLibrary.Shared.Filters
 
                 valueExpression = Expression.Constant(null, propertyType);
             }
-            else if (propertyType == typeof(Guid))
+            else if (propertyType == typeof(Guid) || propertyType == typeof(Guid?))
             {
                 if (Guid.TryParse(value, out Guid parsedValue))
                 {
