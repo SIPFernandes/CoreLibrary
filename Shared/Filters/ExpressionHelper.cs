@@ -161,13 +161,26 @@ namespace CoreLibrary.Shared.Filters
                 var byteArray = Convert.FromBase64String(value);
                 valueExpression = Expression.Constant(byteArray, propertyType);
             }
+            else if (propertyType.IsEnum)
+            {
+                if (int.TryParse(value, out int numericValue))
+                {
+                    valueExpression = Expression.Constant(Enum.ToObject(propertyType, numericValue), propertyType);
+                }
+                else
+                {
+                    valueExpression = Expression.Constant(Enum.Parse(propertyType, value), propertyType);
+                }
+            }
             else
             {
                 try
                 {
-                    var convertType = Convert.ChangeType(value, propertyType);
+                    var underlyingType = Nullable.GetUnderlyingType(propertyType) ?? propertyType;
 
-                    valueExpression = Expression.Constant(convertType);
+                    var convertType = Convert.ChangeType(value, underlyingType);
+
+                    valueExpression = Expression.Constant(convertType, propertyType);
                 }
                 catch (Exception ex)
                 {
