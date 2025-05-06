@@ -30,6 +30,16 @@ namespace CoreLibrary.Core.Interfaces
             Expression<Func<T, Z>> orderedBy, bool descending, Expression<Func<T, bool>>? filter = null,
             int skip = 0, int take = 10, IEnumerable<string>? includes = null,
             CancellationTokenSource? token = null);
+        Task<List<IGrouping<object, T>>> GroupByWhere(Expression<Func<T, object>> groupBy,
+            Expression<Func<T, bool>>? filter = null, int skip = 0, int take = 0,
+            CancellationTokenSource? token = null);
+        Task<List<W>> GroupByWhereDistinctOrdered<W>(Expression<Func<T, W>> selector, 
+            Expression<Func<T, object>> groupBy, Expression<Func<IGrouping<object, T>, T>>? groupBySelect = null,
+            Expression<Func<T, bool>>? filter = null, int skip = 0, int take = 0, CancellationTokenSource? token = null);
+        Task<List<T>> GroupByWhereDistinct(Expression<Func<T, object>> groupBy,
+            Expression<Func<IGrouping<object, T>, T>>? groupBySelect = null,
+            Expression<Func<T, bool>>? filter = null, int skip = 0, int take = 0,
+            CancellationTokenSource? token = null);
         Task<int> Count(Expression<Func<T, bool>>? filter = null, CancellationTokenSource? token = null);
         Task<T> Get(Guid id);
         Task<T> Get(Guid id, IEnumerable<string>? includes = null);

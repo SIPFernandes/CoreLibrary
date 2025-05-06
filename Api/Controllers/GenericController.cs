@@ -72,6 +72,36 @@ namespace CoreLibrary.Api.Controllers
         }
 
         [HttpPost]
+        public virtual async Task<IActionResult> GroupByFiltered([FromBody] GroupByControllerFilter model)
+        {
+            try
+            {
+                var serviceFilter = new GroupByServiceFilter<TEntity>(model);
+
+                var dtos = await _genericService.GroupByFiltered(serviceFilter);
+
+                return Ok(dtos);
+            }
+            catch (Exception ex) when (ex is NotSupportedException ||
+            ex is ArgumentException || ex is InvalidOperationException)
+            {
+                var innerException = ex.InnerException?.Message;
+
+                _logger.LogError(innerException ?? ex.Message);
+
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                var innerException = ex.InnerException?.Message;
+
+                _logger.LogError(innerException ?? ex.Message);
+
+                return StatusCode(500, new { ex.Message, innerException });
+            }
+        }
+
+        [HttpPost]
         public virtual async Task<IActionResult> CountFiltered([FromBody] CombinedFilter? filter)
         {
             try

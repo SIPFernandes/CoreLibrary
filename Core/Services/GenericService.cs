@@ -67,6 +67,27 @@ namespace CoreLibrary.Core.Services
             return result;
         }
 
+        public virtual async Task<IEnumerable<object>> GroupByFiltered(GroupByServiceFilter<TEntity> model)
+        {
+            IEnumerable<object> result = [];
+
+            if (model != null)
+            {
+                if (model.Selector != null)
+                {
+                    result = await _repository.GroupByWhereDistinctOrdered(model.Selector, model.GroupBy.Expression,
+                        model.GroupBy.Select, model.Filter, model.Skip, model.Take, model.Token);
+                }
+                else 
+                {
+                    result = await _repository.GroupByWhereDistinct(model.GroupBy.Expression,
+                        model.GroupBy.Select, model.Filter, model.Skip, model.Take, model.Token);
+                }
+            }
+
+            return result;
+        }
+
         public virtual async Task<int> CountFiltered(Expression<Func<TEntity, bool>>? filter = null)
         {
             return await _repository.Count(filter);

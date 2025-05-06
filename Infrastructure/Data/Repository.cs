@@ -413,6 +413,76 @@ namespace CoreLibrary.Infrastructure.Data
             return await GetItemsList(query, selector, skip, take, token);
         }
 
+        public async Task<List<IGrouping<object, T>>> GroupByWhere(Expression<Func<T, object>> groupBy,
+            Expression<Func<T, bool>>? filter = null, int skip = 0, int take = 0,
+            CancellationTokenSource? token = null)
+        {
+            using var context = await _dbContextFact.CreateDbContextAsync();
+
+            var entities = context.Set<T>().AsQueryable();
+
+            var query = filter == null ? entities : entities.Where(filter);
+
+            var groupByExpression = query.GroupBy(groupBy).Skip(skip).Take(take);
+
+            return await ToListAsync(groupByExpression, token);
+        }
+
+        public async Task<List<W>> GroupByWhereDistinctOrdered<W>(Expression<Func<T, W>> orderSelector, 
+            Expression<Func<T, object>> groupBy, Expression<Func<IGrouping<object, T>, T>>? groupBySelect = null,
+            Expression<Func<T, bool>>? filter = null, int skip = 0, int take = 0, CancellationTokenSource? token = null)
+        {
+            using var context = await _dbContextFact.CreateDbContextAsync();
+
+            var entities = context.Set<T>().AsQueryable();
+
+            var query = filter == null ? entities : entities.Where(filter);
+
+            var groupByExpression = query.GroupBy(groupBy);
+
+            if (groupBySelect != null)
+            {
+                query = groupByExpression.Select(groupBySelect);
+            }
+            else
+            {
+                query = groupByExpression.Select(x => x.First());
+            }
+
+            query = query.Skip(skip).Take(take);
+
+            var queryItems = query.Select(orderSelector);
+
+            return await ToListAsync(queryItems, token);
+        }
+
+        public async Task<List<T>> GroupByWhereDistinct(Expression<Func<T, object>> groupBy,
+            Expression<Func<IGrouping<object, T>, T>>? groupBySelect = null,
+            Expression<Func<T, bool>>? filter = null, int skip = 0, int take = 0,
+            CancellationTokenSource? token = null)
+        {
+            using var context = await _dbContextFact.CreateDbContextAsync();
+
+            var entities = context.Set<T>().AsQueryable();
+
+            var query = filter == null ? entities : entities.Where(filter);
+
+            var groupByExpression = query.GroupBy(groupBy);
+
+            if (groupBySelect != null)
+            {
+                query = groupByExpression.Select(groupBySelect);
+            }
+            else
+            {
+                query = groupByExpression.Select(x => x.First());
+            }
+
+            query = query.Skip(skip).Take(take);
+
+            return await ToListAsync(query, token);
+        }
+
         public async Task<int> Count(Expression<Func<T, bool>>? filter = null, CancellationTokenSource? token = null)
         {
             using var context = await _dbContextFact.CreateDbContextAsync();
