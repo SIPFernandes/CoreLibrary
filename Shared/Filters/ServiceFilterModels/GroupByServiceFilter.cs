@@ -12,20 +12,14 @@ namespace CoreLibrary.Shared.Filters.ServiceFilterModels
                 Expression = ExpressionHelper<TEntity>.GroupByProperty(model.GroupBy.GroupByColumnName)
             };
 
-            if (model.GroupBy.OrderBy != null)
+            if (model.GroupBy.OrderBy != null || model.GroupBy.Selector != null)
             {
-                GroupBy.Select = ExpressionHelper<TEntity>.GetGroupBySelectExpression(
-                    model.GroupBy.OrderBy.PropertyName, model.GroupBy.OrderBy.Descending);
+                GroupBy.Select = ExpressionHelper<TEntity>.GetGroupBySelectExpression(model.GroupBy);
             }
 
             if (model.Filters != null)
             {
                 Filter = ExpressionHelper<TEntity>.CombineExpressions(model.Filters);
-            }
-
-            if (model.SelectProperty != null)
-            {
-                Selector = ExpressionHelper<TEntity>.GetSelectExpression([model.SelectProperty]);
             }
 
             Skip = model.Skip;

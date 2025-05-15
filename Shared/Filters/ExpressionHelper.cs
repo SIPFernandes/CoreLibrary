@@ -97,43 +97,53 @@ namespace CoreLibrary.Shared.Filters
             return lambda;
         }
 
-        public static Expression<Func<IGrouping<object, T>, T>> GetGroupBySelectExpression(
-            string orderByProperty, bool descending = true)
+
+
+        public static Expression<Func<IGrouping<object, T>, object>> GetGroupBySelectExpression(GroupByModel groupByModel)
         {
-            // Parameter for the group
             var groupParameter = Expression.Parameter(typeof(IGrouping<object, T>), "g");
 
-            // Get the OrderBy property expression
-            var orderByExpression = OrderByProperty(orderByProperty);
+            Expression expression = groupParameter;
 
-            // Create the OrderBy or OrderByDescending expression
-            MethodInfo orderByMethod;
-            if (descending)
+            // Apply OrderBy or OrderByDescending if specified
+            if (groupByModel.OrderBy != null)
             {
-                orderByMethod = typeof(Enumerable).GetMethods()
-                    .First(m => m.Name == "OrderByDescending" && m.GetParameters().Length == 2)
+                var orderByExpression = OrderByProperty(groupByModel.OrderBy.PropertyName);
+
+                var orderByMethod = typeof(Enumerable).GetMethods()
+                    .First(m => m.Name == (groupByModel.OrderBy.Descending ? "OrderByDescending" : "OrderBy") &&
+                    m.GetParameters().Length == 2)
                     .MakeGenericMethod(typeof(T), typeof(object));
-            }
-            else
-            {
-                orderByMethod = typeof(Enumerable).GetMethods()
-                    .First(m => m.Name == "OrderBy" && m.GetParameters().Length == 2)
-                    .MakeGenericMethod(typeof(T), typeof(object));
+
+                expression = Expression.Call(orderByMethod, expression, orderByExpression);
             }
 
-            var orderByExpressionCall = Expression.Call(orderByMethod, groupParameter, orderByExpression);
+            Type resultType = typeof(T);
 
-            // Create the FirstOrDefault or First expression
+            // Apply Select if specified
+            if (groupByModel.Selector != null)
+            {
+                var selectLambda = GetSelectExpression(groupByModel.Selector.Properties);
+
+                var selectMethod = typeof(Enumerable).GetMethods()
+                    .First(m => m.Name == "Select" && m.GetParameters().Length == 2)
+                    .MakeGenericMethod(typeof(T), typeof(IDictionary<string, object>));
+
+                expression = Expression.Call(selectMethod, expression, selectLambda);
+                resultType = typeof(IDictionary<string, object>);
+            }
+
+            // Apply FirstOrDefault at the end
             var firstMethod = typeof(Enumerable).GetMethods()
                 .First(m => m.Name == "FirstOrDefault" && m.GetParameters().Length == 1)
-                .MakeGenericMethod(typeof(T));
+                .MakeGenericMethod(resultType);
 
-            var firstExpressionCall = Expression.Call(firstMethod, orderByExpressionCall);
+            expression = Expression.Call(firstMethod, expression);
 
-            // Create the lambda expression
-            var lambda = Expression.Lambda<Func<IGrouping<object, T>, T>>(firstExpressionCall, groupParameter);
-            return lambda;
+            return Expression.Lambda<Func<IGrouping<object, T>, object>>(expression, groupParameter);
         }
+
+
 
         public static Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> BuildSetPropertyExpression(PropertyUpdateModel[] propertyValues)
         {

@@ -73,15 +73,15 @@ namespace CoreLibrary.Core.Services
 
             if (model != null)
             {
-                if (model.Selector != null)
+                if (model.GroupBy.Select != null)
                 {
-                    result = await _repository.GroupByWhereDistinctOrdered(model.Selector, model.GroupBy.Expression,
+                    result = await _repository.GroupByWhereDistinct(model.GroupBy.Expression,
                         model.GroupBy.Select, model.Filter, model.Skip, model.Take, model.Token);
                 }
                 else 
                 {
                     result = await _repository.GroupByWhereDistinct(model.GroupBy.Expression,
-                        model.GroupBy.Select, model.Filter, model.Skip, model.Take, model.Token);
+                        model.Filter, model.Skip, model.Take, model.Token);
                 }
             }
 
