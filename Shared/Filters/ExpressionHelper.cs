@@ -3,6 +3,7 @@ using CoreLibrary.Shared.Filters.ControllerFilterModels.FilterModels;
 using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Text.Json;
 
 namespace CoreLibrary.Shared.Filters
 {
@@ -74,30 +75,52 @@ namespace CoreLibrary.Shared.Filters
             return GetPropertyExpression(propertyName);
         }
 
-        public static Expression<Func<T, IDictionary<string, object>>> GetSelectExpression(IEnumerable<string> properties)
+        public static Expression<Func<T, IDictionary<string, object>>> GetSelectExpression(IEnumerable<PropertySelector> properties)
         {
             var parameter = Expression.Parameter(typeof(T), "e");
 
-            var bindings = properties.Select(propertyName =>
+            var bindings = properties.Select(selector =>
             {
-                var property = Expression.Property(parameter, propertyName);
-                var converted = Expression.Convert(property, typeof(object));
-                return new KeyValuePair<string, Expression>(propertyName, converted);
+                var property = Expression.Property(parameter, selector.Name);
+                Expression valueExpression;
+
+                if (selector.IsObject)
+                {
+                    // Deserialize JSON string to object using JsonSerializer.Deserialize<object>(property)
+                    var deserializeMethod = typeof(JsonSerializer)
+                        .GetMethods(BindingFlags.Public | BindingFlags.Static)
+                        .First(m =>
+                            m.Name == "Deserialize" &&
+                            m.IsGenericMethod &&
+                            m.GetParameters().Length == 2 &&
+                            m.GetParameters()[0].ParameterType == typeof(string) &&
+                            m.GetParameters()[1].ParameterType == typeof(JsonSerializerOptions)
+                        )
+                        .MakeGenericMethod(typeof(object));
+
+                    var optionsParam = Expression.Constant(null, typeof(JsonSerializerOptions));
+
+                    valueExpression = Expression.Call(deserializeMethod, property, optionsParam);
+                }
+                else
+                {
+                    valueExpression = Expression.Convert(property, typeof(object));
+                }
+
+                return new KeyValuePair<string, Expression>(selector.Name, Expression.Convert(valueExpression, typeof(object)));
             }).ToList();
 
-            var keyValuePairs = bindings.Select(b => Expression.ElementInit(
-                typeof(Dictionary<string, object>).GetMethod("Add", [typeof(string), typeof(object)])!,
-                Expression.Constant(b.Key),
-                b.Value
-            )).ToArray();
+            var keyValuePairs = bindings.Select(b =>
+                Expression.ElementInit(
+                    typeof(Dictionary<string, object>).GetMethod("Add", [typeof(string), typeof(object)])!,
+                    Expression.Constant(b.Key),
+                    b.Value
+                )).ToArray();
 
             var newExpression = Expression.ListInit(Expression.New(typeof(Dictionary<string, object>)), keyValuePairs);
 
-            var lambda = Expression.Lambda<Func<T, IDictionary<string, object>>>(newExpression, parameter);
-            return lambda;
+            return Expression.Lambda<Func<T, IDictionary<string, object>>>(newExpression, parameter);
         }
-
-
 
         public static Expression<Func<IGrouping<object, T>, object>> GetGroupBySelectExpression(GroupByModel groupByModel)
         {
