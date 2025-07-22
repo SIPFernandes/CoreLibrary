@@ -5,6 +5,7 @@ namespace CoreLibrary.Shared.Filters.ServiceFilterModels
 {
     public class GetItemsServiceFilter<TEntity>
     {
+        public GetItemsServiceFilter() { }
         public GetItemsServiceFilter(GetItemsControllerFilter model)
         {
             if (model.Selector != null)
