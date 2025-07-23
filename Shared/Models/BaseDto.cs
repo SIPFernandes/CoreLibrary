@@ -6,7 +6,7 @@ namespace CoreLibrary.Shared.Models
     public abstract class BaseDto(Guid userId) : IBinderInterface
     {
         [DefaultValue("00000000-0000-0000-0000-000000000000")]
-        public Guid Id { get; set; }
+        public virtual Guid Id { get; set; }
         [DefaultValue(false)]
         public bool IsDeleted { get; set; } = false;
         public virtual Guid CreatorId { get; set; } = userId;
