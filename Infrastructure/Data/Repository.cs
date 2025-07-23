@@ -133,7 +133,7 @@ namespace CoreLibrary.Infrastructure.Data
             }
         }
 
-        public async Task<Z> GetChild<W, Z>(Guid id, IEnumerable<string>? includes = null)
+        public async Task<Z> GetAnyType<W, Z>(Guid id, IEnumerable<string>? includes = null)
             where W : BaseEntity
             where Z : class
         {

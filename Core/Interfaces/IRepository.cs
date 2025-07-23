@@ -40,7 +40,7 @@ namespace CoreLibrary.Core.Interfaces
         Task<T> Get(Guid id);
         Task<T> Get(Guid id, IEnumerable<string>? includes = null);
         Task<W> Get<W>(Guid id, IEnumerable<string>? includes = null);
-        Task<Z> GetChild<W, Z>(Guid id, IEnumerable<string>? includes = null)
+        Task<Z> GetAnyType<W, Z>(Guid id, IEnumerable<string>? includes = null)
             where W : BaseEntity where Z : class;
         Task<W> Get<W>(Guid id, Expression<Func<T, W>> selector, IEnumerable<string>? includes = null);
         Task<W> Get<W>(Guid id, Expression<Func<T, W>> selector);
