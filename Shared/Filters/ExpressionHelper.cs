@@ -100,7 +100,18 @@ namespace CoreLibrary.Shared.Filters
 
                     var optionsParam = Expression.Constant(null, typeof(JsonSerializerOptions));
 
-                    valueExpression = Expression.Call(deserializeMethod, property, optionsParam);
+                    //valueExpression = Expression.Call(deserializeMethod, property, optionsParam);
+
+                    // Check if property is null
+                    var isNullCheck = Expression.Equal(property, Expression.Constant(null, typeof(string)));
+
+                    // Deserialize if not null, else return null
+                    var deserializeCall = Expression.Call(deserializeMethod, property, optionsParam);
+                    valueExpression = Expression.Condition(
+                        isNullCheck,
+                        Expression.Constant(null, typeof(object)),
+                        Expression.Convert(deserializeCall, typeof(object))
+                    );
                 }
                 else
                 {
