@@ -28,7 +28,7 @@ namespace CoreLibrary.Core.Interfaces
         Task UpdatePropertiesInMultipleItems(Expression<Func<TEntity, bool>>? expression,
             Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyExpression);
         Task Delete(TDto dto);
-        Task<TDto?> DeleteById(Guid id, bool returnDto = false);
+        Task DeleteById(Guid id);
         Task BulkDeleteById(IEnumerable<Guid> id);
         Task DeleteWhere(Expression<Func<TEntity, bool>> expression);
     }

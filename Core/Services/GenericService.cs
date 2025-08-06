@@ -246,18 +246,9 @@ namespace CoreLibrary.Core.Services
             return Task.FromResult(true);
         }
 
-        public virtual async Task<TDto?> DeleteById(Guid id, bool returnDto = false)
+        public virtual async Task DeleteById(Guid id)
         {
-            TDto? result = null;
-
-            var entity = await _repository.DeleteById(id);
-
-            if (returnDto)
-            {
-                result = _mapper.Map<TDto>(entity);
-            }
-
-            return result;
+            await _repository.DeleteById(id);
         }
 
         public virtual async Task BulkDeleteById(IEnumerable<Guid> ids)
