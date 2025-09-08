@@ -9,11 +9,11 @@ namespace CoreLibrary.Shared.Filters.ControllerFilterModels.FilterModels
         [DefaultValue(nameof(OperatorEnum.Equal))]
         [EnumDataType(typeof(OperatorEnum))]
         public required string Operator { get; set; }
-        public required string? Value { get; set; }
+        public string? Value { get; set; }
     }
 
     public enum OperatorEnum
     {
-        Equal, NotEqual, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, Contains, IsNull, IsNotNull
+        Equal, NotEqual, GreaterThan, GreaterThanOrEqual, LessThan, LessThanOrEqual, Contains
     }
 }

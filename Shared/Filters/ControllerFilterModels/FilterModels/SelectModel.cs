@@ -8,7 +8,7 @@
     public class PropertySelector
     {
         public required string Name { get; set; }
-        public bool IsObject { get; set; } = false;
+        public bool IsJsonString { get; set; } = false;
     }
 
 }

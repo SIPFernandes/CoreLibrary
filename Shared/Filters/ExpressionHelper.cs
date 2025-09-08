@@ -84,7 +84,7 @@ namespace CoreLibrary.Shared.Filters
                 var property = Expression.Property(parameter, selector.Name);
                 Expression valueExpression;
 
-                if (selector.IsObject)
+                if (selector.IsJsonString)
                 {
                     // Deserialize JSON string to object using JsonSerializer.Deserialize<object>(property)
                     var deserializeMethod = typeof(JsonSerializer)
