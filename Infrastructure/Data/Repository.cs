@@ -32,17 +32,17 @@ namespace CoreLibrary.Infrastructure.Data
             await SaveChangesAsync(context, token);
         }
 
-        public async Task DeleteMultipleLeafType(Expression<Func<T, bool>> expression,
+        public async Task<int> DeleteMultipleLeafType(Expression<Func<T, bool>> expression,
             CancellationTokenSource? token = null)
         {
             using var context = await _dbContextFact.CreateDbContextAsync();
 
             var entities = context.Set<T>();
 
-            await entities.Where(expression).ExecuteDeleteAsync();
+            return await ExecuteDeleteAsync(expression, token, entities);
         }
 
-        public async Task DeleteMultipleLeafType<W>(Expression<Func<W, bool>> expression,
+        public async Task<int> DeleteMultipleLeafType<W>(Expression<Func<W, bool>> expression,
             CancellationTokenSource? token = null)
             where W : BaseEntity
         {
@@ -50,7 +50,7 @@ namespace CoreLibrary.Infrastructure.Data
 
             var entities = context.Set<W>();
 
-            await entities.Where(expression).ExecuteDeleteAsync();
+            return await ExecuteDeleteAsync(expression, token, entities);
         }
 
         public virtual async Task Delete(T? entity, CancellationTokenSource? token = null)
@@ -620,7 +620,7 @@ namespace CoreLibrary.Infrastructure.Data
             return entitiesToUpdate;
         }
 
-        public async Task UpdateMultipleLeafType(Expression<Func<T, bool>>? expression,
+        public async Task<int> UpdateMultipleLeafType(Expression<Func<T, bool>>? expression,
             Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setPropertyExpression,
             CancellationTokenSource? token = null)
         {
@@ -633,7 +633,17 @@ namespace CoreLibrary.Infrastructure.Data
                 entities = entities.Where(expression);
             }
 
-            await entities.ExecuteUpdateAsync(setPropertyExpression);
+            var result = 0;
+
+            if (token != null)
+            {
+                result = await entities.ExecuteUpdateAsync(setPropertyExpression, token.Token);
+            }
+            else
+            {
+                result = await entities.ExecuteUpdateAsync(setPropertyExpression);
+            }
+            return result;
         }
 
         protected async Task<List<T>> GetNItemsWhere(IIncludableQueryable<T, object> include,
@@ -790,6 +800,23 @@ namespace CoreLibrary.Infrastructure.Data
             {
                 await context.SaveChangesAsync();
             }
+        }
+
+        private static async Task<int> ExecuteDeleteAsync<W>(Expression<Func<W, bool>> expression,
+            CancellationTokenSource? token, DbSet<W> entities) where W : BaseEntity
+        {
+            int result = 0;
+
+            if (token != null)
+            {
+                result = await entities.Where(expression).ExecuteDeleteAsync(token.Token);
+            }
+            else
+            {
+                result = await entities.Where(expression).ExecuteDeleteAsync();
+            }
+
+            return result;
         }
     }
 }

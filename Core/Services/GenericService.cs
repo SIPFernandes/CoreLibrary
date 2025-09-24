@@ -228,10 +228,10 @@ namespace CoreLibrary.Core.Services
 
         //To update multiple properties just call SetProperty in the same chain multiple times
         //Ex x => x.SetProperty(e => e.Property1, e => someValue).SetProperty(e => e.Property2, e => anotherValue)
-        public async Task UpdatePropertiesInMultipleItems(Expression<Func<TEntity, bool>>? expression,
+        public async Task<int> UpdatePropertiesInMultipleItems(Expression<Func<TEntity, bool>>? expression,
             Expression<Func<SetPropertyCalls<TEntity>, SetPropertyCalls<TEntity>>> setPropertyExpression)
         {
-            await _repository.UpdateMultipleLeafType(expression, setPropertyExpression);
+            return await _repository.UpdateMultipleLeafType(expression, setPropertyExpression);
         }
 
         public virtual async Task Delete(TDto dto)
@@ -256,9 +256,9 @@ namespace CoreLibrary.Core.Services
             await _repository.DeleteMultipleLeafType(x => ids.Contains(x.Id));
         }
 
-        public virtual async Task DeleteWhere(Expression<Func<TEntity, bool>> expression)
+        public virtual async Task<int> DeleteWhere(Expression<Func<TEntity, bool>> expression)
         {
-            await _repository.DeleteMultipleLeafType(expression);
+            return await _repository.DeleteMultipleLeafType(expression);
         }
 
         protected async Task<List<TEntity>> FromDtosToEntities(IEnumerable<TDto> dtos, object? validationObj = null)

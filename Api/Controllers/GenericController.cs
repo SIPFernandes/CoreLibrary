@@ -383,11 +383,11 @@ namespace CoreLibrary.Api.Controllers
 
                 var setPropertyExpression = ExpressionHelper<TEntity>.BuildSetPropertyExpression(updateModel.UpdateProperties);
 
-                await _genericService.UpdatePropertiesInMultipleItems(expression, setPropertyExpression);
+                var result = await _genericService.UpdatePropertiesInMultipleItems(expression, setPropertyExpression);
 
                 _logger.LogInformation($"{typeof(TEntity).FullName} updated according to the expressions: {expression}, {setPropertyExpression}");
 
-                return Ok();
+                return Ok(result);
             }
             catch (Exception ex)
             {
@@ -474,11 +474,11 @@ namespace CoreLibrary.Api.Controllers
             {
                 var expression = ExpressionHelper<TEntity>.CombineExpressions(combinedFilter);
 
-                await _genericService.DeleteWhere(expression);
+                var result = await _genericService.DeleteWhere(expression);
 
                 _logger.LogInformation($"{typeof(TEntity).FullName} deleted according to the expression: {expression}");
 
-                return Ok();
+                return Ok(result);
             }
             catch (Exception ex)
             {

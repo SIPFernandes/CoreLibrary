@@ -54,15 +54,15 @@ namespace CoreLibrary.Core.Interfaces
             Expression<Func<W, bool>> expression, CancellationTokenSource? token = null,
             Action<DbSet<W>, W, W>? updateAction = null, bool deleteMissing = true) 
             where W : BaseEntity;
-        Task UpdateMultipleLeafType(Expression<Func<T, bool>>? expression,
+        Task<int> UpdateMultipleLeafType(Expression<Func<T, bool>>? expression,
             Expression<Func<SetPropertyCalls<T>, SetPropertyCalls<T>>> setPropertyExpression,
             CancellationTokenSource? token = null);
         Task Delete(T entity, CancellationTokenSource? token = null);
         Task<T> DeleteById(Guid id, CancellationTokenSource? token = null);
         Task DeleteMultiple(IEnumerable<T> list, CancellationTokenSource? token = null);
-        Task DeleteMultipleLeafType(Expression<Func<T, bool>> expression,
+        Task<int> DeleteMultipleLeafType(Expression<Func<T, bool>> expression,
             CancellationTokenSource? token = null);
-        Task DeleteMultipleLeafType<W>(Expression<Func<W, bool>> expression,
+        Task<int> DeleteMultipleLeafType<W>(Expression<Func<W, bool>> expression,
             CancellationTokenSource? token = null) where W : BaseEntity;
     }
 }
