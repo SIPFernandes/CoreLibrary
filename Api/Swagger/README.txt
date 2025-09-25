@@ -8,7 +8,7 @@ public void ConfigureServices(IServiceCollection services)
     {
         .
         .
-        x.SchemaFilter<SwaggerSchemaFilter>();
+        x.SchemaFilter<DiscriminatorDefaultSchemaFilter>();
         .
     }
 }
