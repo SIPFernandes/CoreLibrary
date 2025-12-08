@@ -22,7 +22,7 @@ namespace CoreLibrary.Api.Controllers
         protected readonly IMapper _mapper = mapper;
 
         [HttpGet]
-        public async Task<IActionResult> Get()
+        public virtual async Task<IActionResult> Get()
         {
             var dto = await _service.GetFirstOrDefault();
 
@@ -41,7 +41,7 @@ namespace CoreLibrary.Api.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> GetSelectFilter([FromBody] GetSelectControllerFilter model)
+        public virtual async Task<ActionResult> GetSelectFilter([FromBody] GetSelectControllerFilter model)
         {
             try
             {
@@ -62,7 +62,7 @@ namespace CoreLibrary.Api.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Update(TForm form)
+        public virtual async Task<IActionResult> Update(TForm form)
         {
             try
             {
