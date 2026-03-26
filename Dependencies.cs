@@ -9,7 +9,7 @@ namespace CoreLibrary
     {
         public static void ConfigureServices(IConfiguration configuration, IServiceCollection services)
         {
-            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+            services.AddAutoMapper(x => { }, AppDomain.CurrentDomain.GetAssemblies());
             services.AddScoped(typeof(IGenericService<,,>), typeof(GenericService<,,>));
         }
     }
